@@ -1,0 +1,63 @@
+import type { Address, Hex } from "viem";
+import { waitMined } from "../chain.js";
+import { loadConfig } from "../config.js";
+import { StepError } from "../output.js";
+import { rpc } from "../rpc.js";
+import { toWire } from "./build.js";
+import { encodeRawFrameTx } from "./codec.js";
+import type { FrameTransaction } from "./types.js";
+
+export type Target = "skandha" | "ethrex";
+
+/**
+ * "skandha": the standard alt-mempool (`eth_sendFrameTransaction` on /rpc).
+ * "ethrex": the canonical mempool (the raw type-0x06 tx via `eth_sendRawTransaction` on the root URL).
+ */
+export async function sendFrameTx(tx: FrameTransaction, target: Target): Promise<Hex> {
+  const cfg = loadConfig();
+  return target === "skandha"
+    ? await rpc(cfg.skandhaUrl, "eth_sendFrameTransaction", [toWire(tx)])
+    : await rpc(cfg.ethrexUrl, "eth_sendRawTransaction", [encodeRawFrameTx(tx)]);
+}
+
+export interface FrameReceipt {
+  status: Hex;
+  blockNumber: Hex;
+  frameReceipts?: { status: Hex }[];
+  [k: string]: unknown;
+}
+
+/** Waits for ethrex's receipt and fails loudly if any frame did not succeed. */
+export async function waitForReceipt(hash: Hex, timeoutMs = 120_000): Promise<FrameReceipt> {
+  const r = (await waitMined(hash, timeoutMs)) as FrameReceipt;
+  const failed = (r.frameReceipts ?? []).map((f, i) => ({ i, ok: f.status === "0x1" })).filter((f) => !f.ok);
+  if (r.status !== "0x1" || failed.length) {
+    throw new StepError("TX_REVERTED", `Transaction ${hash} was mined but frame(s) ${failed.map((f) => f.i).join(", ") || "?"} failed`, {
+      hint: "run `npm run step_11_debug -- " + hash + "`",
+    });
+  }
+  return r;
+}
+
+export async function accountNonce(address: Address): Promise<bigint> {
+  return BigInt(await rpc(loadConfig().ethrexUrl, "eth_getTransactionCount", [address, "latest"]));
+}
+
+export const explorerLink = (hash: Hex) => `https://altmempoolexplorer.forshtat.com/ (search ${hash})`;
+
+export interface Rejection {
+  rule: string;
+  message: string;
+  hint: string;
+}
+
+/** Maps a node's rejection text (ethrex or Skandha) to a rule family from the mempool rules and a next step. */
+export function explainRejection(message: string): Rejection {
+  if (/banned opcode|BannedOpcode/i.test(message)) {
+    return { rule: "OP-011", message, hint: "validation code may not use environment opcodes (TIMESTAMP, NUMBER, BALANCE…); remove the opcode" };
+  }
+  if (/StorageReadNonSender|accessed 0x[0-9a-f]+ slot/i.test(message)) {
+    return { rule: "STO", message, hint: "validation may only touch the sender's own or associated storage; a staked entity may read more in the standard alt-mempool (npm run step_7_stake)" };
+  }
+  return { rule: "UNKNOWN", message, hint: "run `npm run step_11_debug -- <txHash>` if the tx was accepted, or check the node's error text" };
+}
