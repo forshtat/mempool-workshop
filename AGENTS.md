@@ -3,6 +3,8 @@
 You are helping a developer work through an EIP-8141 / standard alt-mempool workshop on a **public throwaway devnet** (chain 1337).
 Read the work-in-progress notice in [README.md](README.md) first: Skandha's rules come from `forshtat/ERCs` PR #6, not exactly ERC-8421.
 
+The mempool node itself (Skandha fork) is in <https://github.com/forshtat/mempool-workshop-sidecar>; its `deploy/devnet/devnet-readme.md` is the RPC reference and `docs/skandha_explorer.md` documents the explorer API.
+
 ## Terminology (use exactly this)
 
 - **canonical mempool**: EIP-8141's own public mempool (ethrex's validation on the devnet).

@@ -7,7 +7,7 @@ the sender is staked, and debug a rejection.
 > [!WARNING]
 > **Work in progress.** Everything here is under active development, and the devnet can be reset at any time.
 >
-> Skandha's rules (the standard alt-mempool this repo talks to) come from
+> Skandha ([source: mempool-workshop-sidecar](https://github.com/forshtat/mempool-workshop-sidecar)) is the standard alt-mempool node this repo talks to. Its rules come from
 > [forshtat/ERCs PR #6](https://github.com/forshtat/ERCs/pull/6), "Update ERC-7562: Add EIP-8141 specific rules",
 > pinned to commit `74a868c`. That work later evolved into [ERC-8421](https://ethereum-magicians.org/t/erc-8421-frame-transaction-alternative-mempools/29800)
 > ([ethereum/ERCs PR #2028](https://github.com/ethereum/ERCs/pull/2028)), and **the two are not equivalent**. The migration is ongoing. Differences known at the time of writing:
@@ -45,6 +45,8 @@ npm run step_1_check
 `step_1_check` creates a throwaway key in `.env` (devnet only; never reuse it on a real network) and funds it from the devnet's shared key. Devnet: chain `1337`,
 ethrex at `https://altmempool.forshtat.com`, Skandha (the mempool) at `https://altmempool.forshtat.com/rpc`,
 explorer at <https://altmempoolexplorer.forshtat.com/>. Override with env vars (`.env.example`).
+
+The mempool node is Skandha, a fork that speaks EIP-8141. Its source, the full RPC reference (`deploy/devnet/devnet-readme.md`), the P2P guide and the devnet explorer API docs live in the sidecar repo: <https://github.com/forshtat/mempool-workshop-sidecar>.
 
 ## The steps
 
