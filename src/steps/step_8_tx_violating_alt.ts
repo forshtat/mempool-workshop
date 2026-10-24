@@ -1,9 +1,9 @@
 import { privateKeyToAccount } from "viem/accounts";
-import { ensureParticipantKey, loadConfig } from "../lib/config.js";
-import { DEFAULT_MAX_FEE, RECIPIENT, buildWalletTx, signFrameTx, txHash } from "../lib/frameTx/build.js";
+import { loadConfig } from "../lib/config.js";
+import { buildWalletTx, signFrameTx, txHash } from "../lib/frameTx/build.js";
 import { accountNonce, explainRejection, explorerLink, sendFrameTx, waitForReceipt } from "../lib/frameTx/send.js";
 import { StepError, runStep } from "../lib/output.js";
-import { requireState, writeState } from "../lib/state.js";
+import { ensureParticipantKey, requireState, writeState } from "../lib/state.js";
 
 runStep("step_8_tx_violating_alt", async (ctx) => {
   const cfg = loadConfig();
@@ -13,7 +13,7 @@ runStep("step_8_tx_violating_alt", async (ctx) => {
 
   // Exactly the tx of step 6 (VERIFY data 0x01 = read foreign storage), now sent to the standard alt-mempool.
   const tx = await signFrameTx(
-    buildWalletTx({ wallet, owner, to: RECIPIENT, value: 1_000_000_000n, nonce: await accountNonce(wallet), chainId: cfg.chainId, maxFeePerGas: DEFAULT_MAX_FEE, verifyData: "0x01" }),
+    buildWalletTx({ wallet, owner, to: cfg.recipient, value: cfg.transferWei, nonce: await accountNonce(wallet), chainId: cfg.chainId, maxFeePerGas: cfg.maxFeePerGasWei, verifyData: "0x01" }),
     ownerKey
   );
   ctx.log("sending the step 6 tx to the standard alt-mempool (Skandha)…");

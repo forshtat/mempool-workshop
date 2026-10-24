@@ -1,10 +1,10 @@
 import { privateKeyToAccount } from "viem/accounts";
 import { getBalance } from "../lib/chain.js";
-import { ensureParticipantKey, loadConfig } from "../lib/config.js";
-import { DEFAULT_MAX_FEE, RECIPIENT, buildWalletTx, signFrameTx } from "../lib/frameTx/build.js";
+import { loadConfig } from "../lib/config.js";
+import { buildWalletTx, signFrameTx } from "../lib/frameTx/build.js";
 import { accountNonce, explorerLink, sendFrameTx, waitForReceipt } from "../lib/frameTx/send.js";
 import { runStep } from "../lib/output.js";
-import { requireState, writeState } from "../lib/state.js";
+import { ensureParticipantKey, requireState, writeState } from "../lib/state.js";
 
 runStep("step_5_tx_wallet", async (ctx) => {
   const cfg = loadConfig();
@@ -13,7 +13,7 @@ runStep("step_5_tx_wallet", async (ctx) => {
   const owner = privateKeyToAccount(ownerKey).address;
   const before = await getBalance(wallet);
   const tx = await signFrameTx(
-    buildWalletTx({ wallet, owner, to: RECIPIENT, value: 1_000_000_000n, nonce: await accountNonce(wallet), chainId: cfg.chainId, maxFeePerGas: DEFAULT_MAX_FEE }),
+    buildWalletTx({ wallet, owner, to: cfg.recipient, value: cfg.transferWei, nonce: await accountNonce(wallet), chainId: cfg.chainId, maxFeePerGas: cfg.maxFeePerGasWei }),
     ownerKey
   );
   ctx.log(`sending a tx whose sender is the wallet ${wallet}, signed by owner ${owner}…`);

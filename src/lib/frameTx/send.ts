@@ -28,8 +28,8 @@ export interface FrameReceipt {
 }
 
 /** Waits for ethrex's receipt and fails loudly if any frame did not succeed. */
-export async function waitForReceipt(hash: Hex, timeoutMs = 120_000): Promise<FrameReceipt> {
-  const r = (await waitMined(hash, timeoutMs)) as FrameReceipt;
+export async function waitForReceipt(hash: Hex): Promise<FrameReceipt> {
+  const r = (await waitMined(hash)) as FrameReceipt;
   const failed = (r.frameReceipts ?? []).map((f, i) => ({ i, ok: f.status === "0x1" })).filter((f) => !f.ok);
   if (r.status !== "0x1" || failed.length) {
     throw new StepError("TX_REVERTED", `Transaction ${hash} was mined but frame(s) ${failed.map((f) => f.i).join(", ") || "?"} failed`, {
@@ -43,7 +43,7 @@ export async function accountNonce(address: Address): Promise<bigint> {
   return BigInt(await rpc(loadConfig().ethrexUrl, "eth_getTransactionCount", [address, "latest"]));
 }
 
-export const explorerLink = (hash: Hex) => `https://altmempoolexplorer.forshtat.com/ (search ${hash})`;
+export const explorerLink = (hash: Hex) => `${loadConfig().explorerUrl} (search ${hash})`;
 
 export interface Rejection {
   rule: string;

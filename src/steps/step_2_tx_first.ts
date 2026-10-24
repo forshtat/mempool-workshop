@@ -1,8 +1,8 @@
 import { privateKeyToAccount } from "viem/accounts";
-import { ensureParticipantKey, loadConfig } from "../lib/config.js";
+import { loadConfig } from "../lib/config.js";
 import { runStep } from "../lib/output.js";
-import { writeState } from "../lib/state.js";
-import { DEFAULT_MAX_FEE, RECIPIENT, buildSelfRelayTx, signFrameTx, txHash } from "../lib/frameTx/build.js";
+import { ensureParticipantKey, writeState } from "../lib/state.js";
+import { buildSelfRelayTx, signFrameTx, txHash } from "../lib/frameTx/build.js";
 import { accountNonce, explorerLink, sendFrameTx, waitForReceipt } from "../lib/frameTx/send.js";
 
 runStep("step_2_tx_first", async (ctx) => {
@@ -10,7 +10,7 @@ runStep("step_2_tx_first", async (ctx) => {
   const key = ensureParticipantKey();
   const from = privateKeyToAccount(key).address;
   const tx = await signFrameTx(
-    buildSelfRelayTx({ from, to: RECIPIENT, value: 1_000_000_000n, nonce: await accountNonce(from), chainId: cfg.chainId, maxFeePerGas: DEFAULT_MAX_FEE }),
+    buildSelfRelayTx({ from, to: cfg.recipient, value: cfg.transferWei, nonce: await accountNonce(from), chainId: cfg.chainId, maxFeePerGas: cfg.maxFeePerGasWei }),
     key
   );
   ctx.log(`sending ${txHash(tx)} to the standard alt-mempool…`);

@@ -1,12 +1,10 @@
 import { privateKeyToAccount } from "viem/accounts";
-import { ensureParticipantKey, loadConfig } from "../lib/config.js";
+import { loadConfig } from "../lib/config.js";
 import { deployApprover, deployContract, deployForeign, deploySignerReader, getStake, reusable } from "../lib/contracts.js";
-import { DEFAULT_MAX_FEE, RECIPIENT, buildWalletTx, signFrameTx, txHash } from "../lib/frameTx/build.js";
+import { buildWalletTx, signFrameTx, txHash } from "../lib/frameTx/build.js";
 import { accountNonce, explainRejection, sendFrameTx, type Rejection, type Target } from "../lib/frameTx/send.js";
 import { StepError, runStep } from "../lib/output.js";
-import { writeState } from "../lib/state.js";
-
-const WALLET_FUNDING = 30_000_000_000_000_000n; // 0.03 ETH: covers gas and the 0.012 ETH stake in step 7
+import { ensureParticipantKey, writeState } from "../lib/state.js";
 
 runStep("step_6_tx_violating_canonical", async (ctx) => {
   const cfg = loadConfig();
@@ -17,13 +15,13 @@ runStep("step_6_tx_violating_canonical", async (ctx) => {
   if (!wallet) {
     const [approver, signerReader, foreign] = [await deployApprover(), await deploySignerReader(), await deployForeign()];
     ctx.log("deploying ViolatingWallet…");
-    wallet = await deployContract("ViolatingWallet", [owner, approver, signerReader, foreign], WALLET_FUNDING);
+    wallet = await deployContract("ViolatingWallet", [owner, approver, signerReader, foreign], cfg.violatingWalletFundingWei);
     writeState({ violating: wallet });
   }
 
   // VERIFY frame data 0x01 makes the wallet read a storage slot it does not own.
   const tx = await signFrameTx(
-    buildWalletTx({ wallet, owner, to: RECIPIENT, value: 1_000_000_000n, nonce: await accountNonce(wallet), chainId: cfg.chainId, maxFeePerGas: DEFAULT_MAX_FEE, verifyData: "0x01" }),
+    buildWalletTx({ wallet, owner, to: cfg.recipient, value: cfg.transferWei, nonce: await accountNonce(wallet), chainId: cfg.chainId, maxFeePerGas: cfg.maxFeePerGasWei, verifyData: "0x01" }),
     ownerKey
   );
 

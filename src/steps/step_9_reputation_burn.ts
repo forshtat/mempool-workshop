@@ -1,8 +1,7 @@
+import { loadConfig } from "../lib/config.js";
 import { getReputation, setReputation } from "../lib/explorer.js";
 import { StepError, runStep } from "../lib/output.js";
 import { requireState } from "../lib/state.js";
-
-const BAN_OPS_SEEN_PENALTY = 10_000; // the value ERC-7562 uses to declare an entity banned (opsSeen far above opsIncluded)
 
 const CHEAT_NOTICE = [
   "THIS STEP CHEATS.",
@@ -32,7 +31,7 @@ runStep("step_9_reputation_burn", async () => {
     return { summary: `${CHEAT_NOTICE}\n\nreputation of ${wallet} reset: ${r.status} (opsSeen ${r.opsSeen}, opsIncluded ${r.opsIncluded})`, data: { shortcut: true, wallet, reset: true, ...r } };
   }
 
-  await setReputation(wallet, BAN_OPS_SEEN_PENALTY, 0);
+  await setReputation(wallet, loadConfig().banOpsSeenPenalty, 0);
   const r = await waitFor(wallet, "BANNED");
   return {
     summary: [CHEAT_NOTICE, "", `reputation of ${wallet}: ${r.status} (opsSeen ${r.opsSeen}, opsIncluded ${r.opsIncluded}, staked ${r.isStaked})`, "next: npm run step_10_tx_violating_alt_banned   (undo with: npm run step_9_reputation_burn -- --reset)"].join("\n"),

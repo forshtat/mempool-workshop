@@ -4,8 +4,6 @@ import { loadConfig } from "./config.js";
 import { StepError } from "./output.js";
 import { rpc } from "./rpc.js";
 
-const GAS_PRICE = 2_000_000n; // devnet base fee is 7 wei; this clears it by a wide margin
-
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 export async function retry<T>(
@@ -45,21 +43,21 @@ export async function sendLegacy(
     const nonce = Number(await rpc(cfg.ethrexUrl, "eth_getTransactionCount", [account.address, "pending"]));
     const raw = await account.signTransaction({
       chainId: cfg.chainId, nonce, to: tx.to, value: tx.value ?? 0n, data: tx.data ?? "0x",
-      gas: tx.gas ?? 250_000n, gasPrice: GAS_PRICE, type: "legacy",
+      gas: tx.gas ?? cfg.legacyGasLimit, gasPrice: cfg.legacyGasPriceWei, type: "legacy",
     });
     return (await rpc(cfg.ethrexUrl, "eth_sendRawTransaction", [raw])) as Hex;
   }, { retries });
 }
 
-export async function waitMined(hash: Hex, timeoutMs = 120_000): Promise<any> {
+export async function waitMined(hash: Hex): Promise<any> {
   const cfg = loadConfig();
-  const deadline = Date.now() + timeoutMs;
+  const deadline = Date.now() + cfg.txTimeoutSec * 1000;
   while (Date.now() < deadline) {
     const r = await rpc(cfg.ethrexUrl, "eth_getTransactionReceipt", [hash]);
     if (r) return r;
     await sleep(2000);
   }
-  throw new StepError("TX_NOT_MINED", `Transaction ${hash} was not mined within ${timeoutMs / 1000}s`, {
+  throw new StepError("TX_NOT_MINED", `Transaction ${hash} was not mined within ${cfg.txTimeoutSec}s`, {
     hint: "the devnet may be stalled; check the explorer and retry",
   });
 }

@@ -37,14 +37,12 @@ export async function getReputation(address: Address, page: (cursor?: string) =>
   return { status: "OK", opsSeen: 0, opsIncluded: 0, isStaked: false };
 }
 
-const ENTRY_POINT = "0x00000000000000000000000000000000000000aa";
-
 /**
  * THE SHORTCUT used by step 9: writes an entity's reputation counters directly through the devnet's open
  * `debug_bundler_setReputation`. Real nodes restrict this method. Only ever call it for the participant's own entity.
  */
 export async function setReputation(address: Address, opsSeen: number, opsIncluded: number): Promise<void> {
-  await rpc(loadConfig().skandhaUrl, "debug_bundler_setReputation", [[{ address, opsSeen, opsIncluded }], ENTRY_POINT]);
+  await rpc(loadConfig().skandhaUrl, "debug_bundler_setReputation", [[{ address, opsSeen, opsIncluded }], loadConfig().entryPoint]);
 }
 
 

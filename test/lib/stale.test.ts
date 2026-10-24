@@ -3,6 +3,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { reusable } from "../../src/lib/contracts.js";
+import { loadConfig, setConfig } from "../../src/lib/config.js";
 import { writeState } from "../../src/lib/state.js";
 
 const ADDR = "0x00000000000000000000000000000000000000b1";
@@ -13,12 +14,12 @@ const mockCode = (code: string) =>
 
 beforeEach(() => {
   dir = fs.mkdtempSync(path.join(os.tmpdir(), "ws-stale-"));
-  process.env.WORKSHOP_STATE = path.join(dir, "state.json");
+  setConfig({ ...loadConfig(), stateFile: path.join(dir, "state.json") });
   writeState({ wallet: ADDR });
 });
 afterEach(() => {
   vi.unstubAllGlobals();
-  delete process.env.WORKSHOP_STATE;
+  setConfig(undefined);
   fs.rmSync(dir, { recursive: true, force: true });
 });
 

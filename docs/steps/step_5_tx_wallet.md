@@ -23,4 +23,4 @@ next: npm run step_6_tx_violating_canonical
 | Symptom / code | Cause | Fix |
 |---|---|---|
 | `STATE_MISSING` | no wallet yet | run `step_4_wallet_deploy` |
-| `RPC_-32502` bad signer | the key in `.env` is not the wallet's owner | deploy a new wallet with `step_4_wallet_deploy -- --fresh` |
+| `RPC_-32502` bad signer | the participant key in `.workshop-state.json` is not the wallet's owner | deploy a new wallet with `step_4_wallet_deploy -- --fresh` |

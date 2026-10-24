@@ -1,13 +1,12 @@
 import { privateKeyToAccount } from "viem/accounts";
 import { getBalance } from "../lib/chain.js";
-import { ensureParticipantKey } from "../lib/config.js";
+import { loadConfig } from "../lib/config.js";
 import { deployApprover, deployContract, deploySignerReader, reusable } from "../lib/contracts.js";
 import { runStep } from "../lib/output.js";
-import { writeState } from "../lib/state.js";
-
-const WALLET_FUNDING = 10_000_000_000_000_000n; // 0.01 ETH, sent as the creation value
+import { ensureParticipantKey, writeState } from "../lib/state.js";
 
 runStep("step_4_wallet_deploy", async (ctx) => {
+  const cfg = loadConfig();
   const owner = privateKeyToAccount(ensureParticipantKey()).address;
   const existing = await reusable("wallet", ctx.fresh);
   if (existing) {
@@ -19,7 +18,7 @@ runStep("step_4_wallet_deploy", async (ctx) => {
   const approver = await deployApprover(ctx.fresh);
   const signerReader = await deploySignerReader(ctx.fresh);
   ctx.log("deploying ExampleWallet (funded through its creation value)…");
-  const wallet = await deployContract("ExampleWallet", [owner, approver, signerReader], WALLET_FUNDING);
+  const wallet = await deployContract("ExampleWallet", [owner, approver, signerReader], cfg.walletFundingWei);
   writeState({ wallet });
   return {
     summary: [`ExampleWallet deployed: ${wallet}`, `owner: ${owner}`, `balance: ${Number(await getBalance(wallet)) / 1e18} ETH`, `next: npm run step_5_tx_wallet`].join("\n"),

@@ -3,15 +3,16 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { readState, requireState, writeState } from "../../src/lib/state.js";
+import { loadConfig, setConfig } from "../../src/lib/config.js";
 import { StepError } from "../../src/lib/output.js";
 
 let dir: string;
 beforeEach(() => {
   dir = fs.mkdtempSync(path.join(os.tmpdir(), "ws-state-"));
-  process.env.WORKSHOP_STATE = path.join(dir, "state.json");
+  setConfig({ ...loadConfig(), stateFile: path.join(dir, "state.json") });
 });
 afterEach(() => {
-  delete process.env.WORKSHOP_STATE;
+  setConfig(undefined);
   fs.rmSync(dir, { recursive: true, force: true });
 });
 

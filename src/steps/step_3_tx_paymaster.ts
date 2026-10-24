@@ -2,12 +2,10 @@ import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
 import { getBalance } from "../lib/chain.js";
 import { loadConfig } from "../lib/config.js";
 import { deployApprover, deployContract, reusable } from "../lib/contracts.js";
-import { DEFAULT_MAX_FEE, RECIPIENT, buildPaymasterTx, signFrameTx } from "../lib/frameTx/build.js";
+import { buildPaymasterTx, signFrameTx } from "../lib/frameTx/build.js";
 import { explorerLink, sendFrameTx, waitForReceipt } from "../lib/frameTx/send.js";
 import { runStep } from "../lib/output.js";
 import { writeState } from "../lib/state.js";
-
-const PAYMASTER_FUNDING = 10_000_000_000_000_000n; // 0.01 ETH, sent as the creation value
 
 runStep("step_3_tx_paymaster", async (ctx) => {
   const cfg = loadConfig();
@@ -16,7 +14,7 @@ runStep("step_3_tx_paymaster", async (ctx) => {
   let paymaster = await reusable("paymaster", ctx.fresh);
   if (!paymaster) {
     ctx.log("deploying SponsorPaymaster (funded through its creation value)…");
-    paymaster = await deployContract("SponsorPaymaster", [approver], PAYMASTER_FUNDING);
+    paymaster = await deployContract("SponsorPaymaster", [approver], cfg.paymasterFundingWei);
     writeState({ paymaster });
   }
 
@@ -26,7 +24,7 @@ runStep("step_3_tx_paymaster", async (ctx) => {
   const before = await getBalance(paymaster);
 
   const tx = await signFrameTx(
-    buildPaymasterTx({ from: sender, paymaster, to: RECIPIENT, nonce: 0n, chainId: cfg.chainId, maxFeePerGas: DEFAULT_MAX_FEE }),
+    buildPaymasterTx({ from: sender, paymaster, to: cfg.recipient, nonce: 0n, chainId: cfg.chainId, maxFeePerGas: cfg.maxFeePerGasWei }),
     senderKey
   );
   ctx.log(`sender ${sender} holds 0 ETH; sending through paymaster ${paymaster}…`);

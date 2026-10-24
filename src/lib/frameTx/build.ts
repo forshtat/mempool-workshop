@@ -1,12 +1,9 @@
 import { encodeFunctionData, keccak256 } from "viem";
 import type { Address, Hex } from "viem";
 import { sign } from "viem/accounts";
-import { STAKING_REGISTRY } from "../contracts.js";
 import { computeSigHash, encodeRawFrameTx } from "./codec.js";
 import { FRAME_MODE, SIG_SCHEME, type Frame, type FrameTransaction } from "./types.js";
 
-export const RECIPIENT = "0x8943545177806ED17B9F23F0a21ee5948eCaa776" as Address;
-export const DEFAULT_MAX_FEE = 2_000_000_000n;
 /** Approve scope bits: 1 = payment, 2 = execution, 3 = both. */
 export const APPROVE = { PAYMENT: 1, EXECUTION: 2, BOTH: 3 } as const;
 
@@ -127,14 +124,14 @@ const ADD_STAKE_ABI = [{ type: "function", name: "addStake", stateMutability: "p
  * registry's `addStake` makes the wallet the staker. The VERIFY frame stays on the clean path (empty data).
  */
 export function buildStakeTx(a: {
-  wallet: Address; owner: Address; amount: bigint; unstakeDelaySec: number; nonce: bigint; chainId: number; maxFeePerGas: bigint;
+  registry: Address; wallet: Address; owner: Address; amount: bigint; unstakeDelaySec: number; nonce: bigint; chainId: number; maxFeePerGas: bigint;
 }): FrameTransaction {
   return assembleTx({
     sender: a.wallet, nonceSeq: a.nonce, chainId: a.chainId, maxFeePerGas: a.maxFeePerGas,
     signature: { ...SECP256K1_PLACEHOLDER, signer: a.owner },
     frames: [
       frame(FRAME_MODE.VERIFY, APPROVE.BOTH, null, 70_000n),
-      frame(FRAME_MODE.SENDER, 0, STAKING_REGISTRY, 150_000n, {
+      frame(FRAME_MODE.SENDER, 0, a.registry, 150_000n, {
         value: a.amount, state: 300_000n,
         data: encodeFunctionData({ abi: ADD_STAKE_ABI, functionName: "addStake", args: [a.unstakeDelaySec] }),
       }),

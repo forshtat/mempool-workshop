@@ -1,17 +1,16 @@
 import { privateKeyToAccount } from "viem/accounts";
 import { fundFromFaucet, getBalance } from "../lib/chain.js";
-import { ensureParticipantKey, loadConfig } from "../lib/config.js";
+import { loadConfig } from "../lib/config.js";
+import { ensureParticipantKey } from "../lib/state.js";
 import { StepError, runStep } from "../lib/output.js";
 import { rpc } from "../lib/rpc.js";
-
-const MIN_BALANCE = 100_000_000_000_000_000n; // 0.1 ETH: enough for every step, with room for deployments
 
 runStep("step_1_check", async (ctx) => {
   const cfg = loadConfig();
   for (const [label, url] of [["ethrex", cfg.ethrexUrl], ["skandha", cfg.skandhaUrl]] as const) {
     const id = Number(await rpc(url, "eth_chainId", []));
     if (id !== cfg.chainId) {
-      throw new StepError("WRONG_CHAIN", `${label} at ${url} reports chain ${id}, expected ${cfg.chainId}`, { hint: "set CHAIN_ID / the URLs in .env, or the devnet was replaced" });
+      throw new StepError("WRONG_CHAIN", `${label} at ${url} reports chain ${id}, expected ${cfg.chainId}`, { hint: "update chainId / the URLs in workshop.config.json5, or the devnet was replaced" });
     }
   }
   const skCfg = await rpc(cfg.skandhaUrl, "skandha_config", []);
@@ -27,7 +26,7 @@ runStep("step_1_check", async (ctx) => {
   const account = privateKeyToAccount(ensureParticipantKey());
   let balance = await getBalance(account.address);
   let funded = false;
-  if (balance < MIN_BALANCE) {
+  if (balance < cfg.minBalanceWei) {
     ctx.log(`asking the faucet to fund ${account.address}…`);
     await fundFromFaucet(account.address);
     balance = await getBalance(account.address);

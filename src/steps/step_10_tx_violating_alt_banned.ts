@@ -1,10 +1,10 @@
 import { privateKeyToAccount } from "viem/accounts";
-import { ensureParticipantKey, loadConfig } from "../lib/config.js";
+import { loadConfig } from "../lib/config.js";
 import { getReputation } from "../lib/explorer.js";
-import { DEFAULT_MAX_FEE, RECIPIENT, buildWalletTx, signFrameTx, txHash } from "../lib/frameTx/build.js";
+import { buildWalletTx, signFrameTx, txHash } from "../lib/frameTx/build.js";
 import { accountNonce, explainRejection, sendFrameTx } from "../lib/frameTx/send.js";
 import { StepError, runStep } from "../lib/output.js";
-import { requireState } from "../lib/state.js";
+import { ensureParticipantKey, requireState } from "../lib/state.js";
 
 runStep("step_10_tx_violating_alt_banned", async (ctx) => {
   const cfg = loadConfig();
@@ -14,7 +14,7 @@ runStep("step_10_tx_violating_alt_banned", async (ctx) => {
   const reputation = await getReputation(wallet);
 
   const tx = await signFrameTx(
-    buildWalletTx({ wallet, owner, to: RECIPIENT, value: 1_000_000_000n, nonce: await accountNonce(wallet), chainId: cfg.chainId, maxFeePerGas: DEFAULT_MAX_FEE, verifyData: "0x01" }),
+    buildWalletTx({ wallet, owner, to: cfg.recipient, value: cfg.transferWei, nonce: await accountNonce(wallet), chainId: cfg.chainId, maxFeePerGas: cfg.maxFeePerGasWei, verifyData: "0x01" }),
     ownerKey
   );
   ctx.log(`sending the step 8 tx again; the wallet's reputation is ${reputation.status}…`);

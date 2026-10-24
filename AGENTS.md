@@ -19,7 +19,7 @@ for the "fail" steps (6, 10) that is the rejection.
 
 | Command | Needs state from | Expected result |
 |---|---|---|
-| `step_1_check` | nothing | chain 1337, participant key in `.env`, balance > 0.1 ETH (funded by the faucet) |
+| `step_1_check` | nothing | chain 1337, participant key in `.workshop-state.json`, balance > 0.1 ETH (funded by the faucet) |
 | `step_2_tx_first` | step 1 | tx mined, `frames: 2` |
 | `step_3_tx_paymaster` | step 1 | tx mined, paymaster balance dropped, sender balance 0 |
 | `step_4_wallet_deploy` | step 1 | `wallet` address in state |
@@ -31,17 +31,18 @@ for the "fail" steps (6, 10) that is the rejection.
 | `step_10_tx_violating_alt_banned` | step 9 | rejected, explorer shows `BANNED` (exit 0) |
 | `step_11_debug -- <txHash>` | none (defaults to the last tx) | admission report, lifecycle, status |
 
-Flags: `--json`, `--fresh` (redeploy contracts the step owns). State is in `.workshop-state.json`; config in `.env` (see `.env.example`). Per-step runbooks: `docs/steps/`.
+Flags: `--json`, `--fresh` (redeploy contracts the step owns). Config is `workshop.config.json5` and nothing else: every key is required, unknown keys are an error, the code never writes it, and there are no environment variables. What the steps generate (participant key, deployed addresses, last tx hash) is state, in `.workshop-state.json`. Per-step runbooks: `docs/steps/`.
 
 ## Error codes (`--json` failure: `{ok:false, code, rule, hint, message}`)
 
 | code | cause | fix |
 |---|---|---|
-| `RPC_UNREACHABLE` | network, or the devnet is down | retry; check `ETHREX_URL` / `SKANDHA_URL` |
+| `RPC_UNREACHABLE` | network, or the devnet is down | retry; check `ethrexUrl` / `skandhaUrl` in `workshop.config.json5` |
 | `RPC_-32601` | wrong endpoint (ethrex root vs Skandha `/rpc`) | use the other URL |
 | `RPC_-32502` | the mempool rules rejected the tx | read `rule` and `message`; run `step_11_debug -- <txHash>` |
 | `RPC_-32500` | nonce mismatch or an invalid tx | contract wallets start at nonce 1; re-read the nonce |
-| `WRONG_CHAIN` | devnet was replaced | check `CHAIN_ID` and the URLs |
+| `WRONG_CHAIN` | devnet was replaced | check `chainId` and the URLs in `workshop.config.json5` |
+| `CONFIG_INVALID` / `CONFIG_MISSING` | `workshop.config.json5` has a missing, unknown or malformed key, or is gone | the message lists each problem; restore the file from git |
 | `STATE_MISSING` | a step's prerequisite did not run | run the step named in `hint` |
 | `STATE_STALE` | recorded contract has no code (devnet reset) | re-run that step with `--fresh` |
 | `DEPLOY_FAILED` | deploy reverted | needs ~6M gas and enough balance for `value`; run `step_1_check` to top up |
