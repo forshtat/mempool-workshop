@@ -1,7 +1,7 @@
 import { privateKeyToAccount } from "viem/accounts";
 import { getBalance } from "../lib/chain.js";
 import { loadConfig } from "../lib/config.js";
-import { deployApprover, deployContract, deploySignerReader, reusable } from "../lib/contracts.js";
+import { deployContract, reusable } from "../lib/contracts.js";
 import { runStep } from "../lib/output.js";
 import { ensureParticipantKey, writeState } from "../lib/state.js";
 
@@ -15,13 +15,11 @@ runStep("step_4_wallet_deploy", async (ctx) => {
       data: { wallet: existing, owner, reused: true, balanceWei: (await getBalance(existing)).toString() },
     };
   }
-  const approver = await deployApprover(ctx.fresh);
-  const signerReader = await deploySignerReader(ctx.fresh);
   ctx.log("deploying ExampleWallet (funded through its creation value)…");
-  const wallet = await deployContract("ExampleWallet", [owner, approver, signerReader], cfg.walletFundingWei);
+  const wallet = await deployContract("ExampleWallet", [owner], cfg.walletFundingWei);
   writeState({ wallet });
   return {
     summary: [`ExampleWallet deployed: ${wallet}`, `owner: ${owner}`, `balance: ${Number(await getBalance(wallet)) / 1e18} ETH`, `next: npm run step_5_tx_wallet`].join("\n"),
-    data: { wallet, owner, approver, signerReader, reused: false },
+    data: { wallet, owner, reused: false },
   };
 });

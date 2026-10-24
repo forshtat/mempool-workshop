@@ -1,14 +1,7 @@
-export class StepError extends Error {
-  code: string;
-  rule?: string;
-  hint?: string;
-  constructor(code: string, message: string, opts: { rule?: string; hint?: string } = {}) {
-    super(message);
-    this.code = code;
-    this.rule = opts.rule;
-    this.hint = opts.hint;
-  }
-}
+import { StepError } from "./stepError.js";
+import { gated } from "./progress.js";
+
+export { StepError };
 
 export interface Result {
   summary: string;
@@ -71,7 +64,7 @@ export async function runStep(name: string, fn: (ctx: StepContext) => Promise<Re
   const json = argv.includes("--json");
   // Stream progress to stderr live instead of buffering until the end.
   const live = (l: string) => process.stderr.write(l + "\n");
-  const r = await executeStep(name, (ctx) => fn({ ...ctx, log: live }), argv);
+  const r = await executeStep(name, gated(name, (ctx) => fn({ ...ctx, log: live })), argv);
   process.stdout.write(r.stdout + "\n");
   process.exit(r.exitCode);
 }

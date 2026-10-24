@@ -1,6 +1,6 @@
 import { privateKeyToAccount } from "viem/accounts";
 import { loadConfig } from "../lib/config.js";
-import { deployApprover, deployContract, deployForeign, deploySignerReader, getStake, reusable } from "../lib/contracts.js";
+import { deployContract, deployForeign, getStake, reusable } from "../lib/contracts.js";
 import { buildWalletTx, signFrameTx, txHash } from "../lib/frameTx/build.js";
 import { accountNonce, explainRejection, sendFrameTx, sendRawFrameTx, type Rejection } from "../lib/frameTx/send.js";
 import { StepError, runStep } from "../lib/output.js";
@@ -13,9 +13,9 @@ runStep("step_6_tx_violating_canonical", async (ctx) => {
 
   let wallet = await reusable("violating", ctx.fresh);
   if (!wallet) {
-    const [approver, signerReader, foreign] = [await deployApprover(), await deploySignerReader(), await deployForeign()];
+    const foreign = await deployForeign(ctx.fresh);
     ctx.log("deploying ViolatingWallet…");
-    wallet = await deployContract("ViolatingWallet", [owner, approver, signerReader, foreign], cfg.violatingWalletFundingWei);
+    wallet = await deployContract("ViolatingWallet", [owner, foreign], cfg.violatingWalletFundingWei);
     writeState({ violating: wallet });
   }
 

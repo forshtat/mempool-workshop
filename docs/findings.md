@@ -42,8 +42,10 @@ same tx, so participants see both messages.
   wallet's code, which calls `APPROVE` outside a frame, and fails.
 - The wallet's nonce starts at 1 after creation.
 
-**Decision:** one `Approver` contract (raw bytecode, deployed once per participant) plus Solidity
-wallets that `delegatecall` it. Wallets take the approver address in the constructor.
+**Decision (superseded):** one `Approver` contract (raw bytecode, deployed once per participant) plus Solidity
+wallets that `delegatecall` it. Wallets took the approver address in the constructor.
+
+**Now:** wallets and the paymaster inherit `HegotaSupport` from `hegota-frames`, which does the same thing with Yul helpers it creates itself (`approve` by `delegatecall`, `sigparam` by `staticcall`). Consequences: no helper to deploy first; a wallet's nonce starts at 8 (1 plus the 7 helpers it creates); deployments cost 3.2M (`SponsorPaymaster`), 4.8M (`ExampleWallet`) and 5.1M (`ViolatingWallet`) gas by `eth_estimateGas` against the gateway, so the 6M `deployGasLimit` still fits. Forge cannot run the opcodes, so the contract tests put stand-ins at the helpers' addresses (`test/HegotaMocks.sol`).
 
 ## Check 3: reputation (steps 9 and 10): PASS via a declared shortcut
 

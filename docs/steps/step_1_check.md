@@ -6,7 +6,7 @@
 npm run step_1_check      # add --json for one JSON object
 ```
 
-**Needs:** nothing
+**Needs:** nothing. It also **resets the workshop**: the addresses and finished steps in `.workshop-state.json` are forgotten (the participant key stays, because the faucet funds each address once an hour), and it records the key's address. Every other step then refuses to run before the steps it needs have finished (`STEP_ORDER`), or if the key is no longer the recorded one (`STATE_KEY_CHANGED`).
 
 **What it does:** Checks `eth_chainId` on the gateway, reads `skandha_config` and the explorer, creates the participant key in `.workshop-state.json` if missing, and asks the Skandha node's faucet (`skandha_explorer_faucet`, 1 ETH) to fund the key when it holds less than `minBalanceEth` (0.1 ETH). There is no funded key in this repo.
 

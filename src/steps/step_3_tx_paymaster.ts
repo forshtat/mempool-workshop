@@ -1,7 +1,7 @@
 import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
 import { getBalance } from "../lib/chain.js";
 import { loadConfig } from "../lib/config.js";
-import { deployApprover, deployContract, reusable } from "../lib/contracts.js";
+import { deployContract, reusable } from "../lib/contracts.js";
 import { buildPaymasterTx, signFrameTx } from "../lib/frameTx/build.js";
 import { explorerLink, sendFrameTx, waitForReceipt } from "../lib/frameTx/send.js";
 import { runStep } from "../lib/output.js";
@@ -9,12 +9,11 @@ import { writeState } from "../lib/state.js";
 
 runStep("step_3_tx_paymaster", async (ctx) => {
   const cfg = loadConfig();
-  const approver = await deployApprover(ctx.fresh);
 
   let paymaster = await reusable("paymaster", ctx.fresh);
   if (!paymaster) {
     ctx.log("deploying SponsorPaymaster (funded through its creation value)…");
-    paymaster = await deployContract("SponsorPaymaster", [approver], cfg.paymasterFundingWei);
+    paymaster = await deployContract("SponsorPaymaster", [], cfg.paymasterFundingWei);
     writeState({ paymaster });
   }
 

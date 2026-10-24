@@ -1,18 +1,19 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {Test} from "forge-std/Test.sol";
 import {ViolatingWallet} from "../src/ViolatingWallet.sol";
-import {MockApprover, MockSignerReader, MockForeign} from "./MockApprover.sol";
+import {HegotaMocks, MockForeign} from "./HegotaMocks.sol";
 
-contract ViolatingWalletTest is Test {
+contract ViolatingWalletTest is HegotaMocks {
     address owner = address(0xA11CE);
     ViolatingWallet w;
     address foreign;
 
     function setUp() public {
         foreign = address(new MockForeign());
-        w = new ViolatingWallet(owner, address(new MockApprover()), address(new MockSignerReader(owner)), foreign);
+        w = new ViolatingWallet(owner, foreign);
+        mockApprove(address(w));
+        mockSigner(address(w), owner);
     }
 
     function test_cleanFrameDataDoesNotReadForeignStorage() public {
@@ -28,7 +29,9 @@ contract ViolatingWalletTest is Test {
     }
 
     function test_rejectsOtherSignerEvenOnTheCleanPath() public {
-        ViolatingWallet other = new ViolatingWallet(owner, address(new MockApprover()), address(new MockSignerReader(address(0xBAD))), foreign);
+        ViolatingWallet other = new ViolatingWallet(owner, foreign);
+        mockApprove(address(other));
+        mockSigner(address(other), address(0xBAD));
         (bool ok, ) = address(other).call("");
         assertFalse(ok);
     }

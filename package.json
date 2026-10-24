@@ -32,8 +32,8 @@
     "vitest": "^5.0.5"
   },
   "dependencies": {
-    "@ethereumjs/rlp": "^10.1.3",
     "json5": "^2.2.3",
-    "viem": "^2.57.7"
+    "viem": "^2.57.7",
+    "hegota-frames": "github:forshtat/hegota-frames-yul-library#1047d60e8828ddc29e06a19aab58ef4b788af219"
   }
 }

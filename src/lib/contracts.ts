@@ -6,21 +6,7 @@ import { rpc } from "./rpc.js";
 import { StepError } from "./output.js";
 import { ensureParticipantKey, readState, writeState, type WorkshopState } from "./state.js";
 
-const initCode = (runtime: string): Hex => {
-  const len = (runtime.length / 2).toString(16).padStart(2, "0");
-  return `0x60${len}600c60003960${len}6000f3${runtime}`;
-};
-
-/** Runtime: PUSH0-free `CALLDATALOAD(0)` as scope, then `APPROVE(scope, 0, 0)` (opcode 0xaa). */
-export const APPROVER_INIT_CODE = initCode("60003560006000aa");
-
-/** Runtime: `SIGPARAM(signatureIndex 0, param 0 = RESOLVED_SIGNER)` (opcode 0xb4), returned as one word. */
-export const SIGNER_READER_INIT_CODE = initCode("60006000b460005260206000f3");
-
-/** Runtime: `SLOAD(0); POP; STOP`. Reading this contract's storage from validation is the demo storage-rule violation. */
-export const FOREIGN_INIT_CODE = initCode("6000545000");
-
-export type ArtifactName = "SponsorPaymaster" | "ExampleWallet" | "ViolatingWallet";
+export type ArtifactName = "SponsorPaymaster" | "ExampleWallet" | "ViolatingWallet" | "Foreign";
 
 export function loadArtifact(name: ArtifactName): { abi: Abi; bytecode: Hex } {
   const file = new URL(`../../contracts/artifacts/${name}.json`, import.meta.url);
@@ -35,7 +21,7 @@ async function deployRaw(data: Hex, value: bigint): Promise<Address> {
   const hash = await sendLegacy(ensureParticipantKey(), { to: null, data, value, gas: loadConfig().deployGasLimit });
   const receipt = await waitMined(hash);
   if (receipt.status !== "0x1" || !receipt.contractAddress) {
-    throw new StepError("DEPLOY_FAILED", `Deployment ${hash} reverted`, { hint: "deployments need ~6M gas on this devnet; check the participant balance covers `value` plus gas" });
+    throw new StepError("DEPLOY_FAILED", `Deployment ${hash} reverted`, { hint: "deployments of wallets and paymasters create helper contracts and need ~9M gas on this devnet; check the participant balance covers `value` plus gas" });
   }
   return receipt.contractAddress as Address;
 }
@@ -61,17 +47,14 @@ export async function reusable(key: keyof WorkshopState, fresh: boolean): Promis
   });
 }
 
-async function deployHelper(key: "approver" | "signerReader" | "foreign", init: Hex, fresh: boolean): Promise<Address> {
-  const existing = await reusable(key, fresh);
+/** The contract whose storage `ViolatingWallet` reads. Reused through the state key `foreign` unless `fresh`. */
+export async function deployForeign(fresh = false): Promise<Address> {
+  const existing = await reusable("foreign", fresh);
   if (existing) return existing;
-  const address = await deployRaw(init, 0n);
-  writeState({ [key]: address });
+  const address = await deployContract("Foreign");
+  writeState({ foreign: address });
   return address;
 }
-
-export const deployApprover = (fresh = false) => deployHelper("approver", APPROVER_INIT_CODE, fresh);
-export const deployForeign = (fresh = false) => deployHelper("foreign", FOREIGN_INIT_CODE, fresh);
-export const deploySignerReader = (fresh = false) => deployHelper("signerReader", SIGNER_READER_INIT_CODE, fresh);
 
 const DEPOSIT_INFO_ABI = [{ type: "function", name: "getDepositInfo", stateMutability: "view", inputs: [{ type: "address" }], outputs: [{ type: "uint256" }, { type: "uint32" }, { type: "uint64" }] }] as const;
 

@@ -8,7 +8,7 @@ npm run step_5_tx_wallet      # add --json for one JSON object
 
 **Needs:** step 4
 
-**What it does:** Sender is the wallet; the owner key signs. Nonce comes from the chain (a contract's nonce starts at 1). The wallet pays for itself.
+**What it does:** Sender is the wallet; the owner key signs. Nonce comes from the chain (a contract's nonce starts at 1 and counts the helper contracts the wallet created: 8 for an `ExampleWallet`). The wallet pays for itself.
 
 **Expected output** (addresses and hashes differ):
 

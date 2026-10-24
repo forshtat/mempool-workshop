@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {FrameApprover} from "./FrameApprover.sol";
+import {HegotaSupport} from "hegota-frames/contracts/HegotaSupport.sol";
+import {Devnet} from "hegota-frames/contracts/Devnet.sol";
+import {Scope} from "hegota-frames/contracts/Params.sol";
 
 /// Demo paymaster: pays for anyone while it has ETH. Not for production.
 ///
@@ -11,11 +13,11 @@ import {FrameApprover} from "./FrameApprover.sol";
 ///
 /// Fund it through the `value` of its creation: a plain transfer would run the fallback below,
 /// which calls APPROVE outside a frame and fails.
-contract SponsorPaymaster is FrameApprover {
-    constructor(address approver_) payable FrameApprover(approver_) {}
+contract SponsorPaymaster is HegotaSupport(Devnet.ERC8421_WORKSHOP) {
+    constructor() payable {}
 
     /// The VERIFY frame whose target is this paymaster lands here.
     fallback() external payable {
-        _approve(SCOPE_PAYMENT);
+        approve(Scope.PAYMENT);
     }
 }

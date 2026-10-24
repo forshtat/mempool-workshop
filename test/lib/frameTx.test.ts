@@ -44,7 +44,7 @@ describe("frame tx lib", () => {
     expect(txHash(signed)).toBe(keccak256(encodeRawFrameTx(signed)));
     const raw = encodeRawFrameTx(signed);
     expect(raw.startsWith("0x06")).toBe(true);
-    const back = decodeFrameTx(Uint8Array.from(Buffer.from(raw.slice(4), "hex")));
+    const back = decodeFrameTx(raw);
     expect(back.nonceSeq).toBe(7n);
     expect(back.sender).toBe(from.toLowerCase());
   });

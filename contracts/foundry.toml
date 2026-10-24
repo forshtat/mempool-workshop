@@ -6,3 +6,7 @@ libs = ["lib"]
 solc_version = "0.8.28"
 via_ir = true
 evm_version = "cancun"
+# hegota-frames is an npm dependency of the workshop (installed in the repo root)
+remappings = ["hegota-frames/=../node_modules/hegota-frames/"]
+# solc may only read inside the project unless told otherwise; the library lives in the repo root's node_modules
+allow_paths = ["../node_modules"]

@@ -1,39 +1,25 @@
-import { encodeFunctionData, keccak256 } from "viem";
+import { encodeFunctionData } from "viem";
 import type { Address, Hex } from "viem";
-import { sign } from "viem/accounts";
+import * as lib from "hegota-frames/tx";
 import { computeSigHash, encodeRawFrameTx } from "./codec.js";
-import { FRAME_MODE, SIG_SCHEME, type Frame, type FrameTransaction } from "./types.js";
+import { profile } from "./profile.js";
+import type { Frame, FrameTransaction } from "./types.js";
 
-/** Approve scope bits: 1 = payment, 2 = execution, 3 = both. */
-export const APPROVE = { PAYMENT: 1, EXECUTION: 2, BOTH: 3 } as const;
+/** A frame of the named mode. `scope` is an approve scope of the devnet (`"EXECUTION_AND_PAYMENT"`), `null` target = the sender. */
+const frame = (mode: "VERIFY" | "SENDER", scope: string | undefined, target: Address | null, execution: bigint, opts: { value?: bigint; data?: Hex; state?: bigint } = {}): Frame =>
+  lib.frame(profile, mode, { scope, target, execution, state: opts.state, value: opts.value, data: opts.data });
 
-export const frame = (
-  mode: number, flags: number, target: Address | null, execution: bigint,
-  opts: { value?: bigint; data?: Hex; state?: bigint } = {}
-): Frame => ({
-  mode, flags, target,
-  limits: { execution, state: opts.state ?? 0n },
-  value: opts.value ?? 0n, data: opts.data ?? "0x",
-} as Frame);
+const SECP256K1_PLACEHOLDER = (signer: Hex = "0x") => lib.secp256k1Placeholder(profile, signer);
 
-export const ARBITRARY_SIGNATURE = { scheme: SIG_SCHEME.ARBITRARY, signer: "0x", msg: "0x", signature: "0x" } as const;
-export const SECP256K1_PLACEHOLDER = { scheme: SIG_SCHEME.SECP256K1, signer: "0x", msg: "0x", signature: "0x" } as const;
-
-export function assembleTx(f: {
-  sender: Address; nonceSeq: bigint; chainId: number; maxFeePerGas: bigint; frames: Frame[];
-  signature?: { scheme: number; signer: Hex; msg: Hex; signature: Hex }; nonceKey?: bigint;
-}): FrameTransaction {
-  return {
-    chainId: BigInt(f.chainId),
-    nonceKeys: [f.nonceKey ?? 0n],
-    nonceSeq: f.nonceSeq,
+function assembleTx(f: { sender: Address; nonceSeq: bigint; chainId: number; maxFeePerGas: bigint; frames: Frame[]; signer?: Hex }): FrameTransaction {
+  return lib.newTx({
+    chainId: f.chainId,
     sender: f.sender,
+    nonceSeq: f.nonceSeq,
     frames: f.frames,
-    signatures: [{ ...(f.signature ?? ARBITRARY_SIGNATURE) }],
-    fees: { maxPriorityFeePerGas: f.maxFeePerGas, maxFeePerGas: f.maxFeePerGas, maxFeePerBlobGas: 0n },
-    blobVersionedHashes: [],
-    recentRootReferences: [],
-  } as FrameTransaction;
+    signatures: [SECP256K1_PLACEHOLDER(f.signer)],
+    fees: { maxFeePerGas: f.maxFeePerGas },
+  });
 }
 
 /** `[self_verify]` + one SENDER transfer; the EOA signs and pays for itself. */
@@ -42,22 +28,16 @@ export function buildSelfRelayTx(a: {
 }): FrameTransaction {
   return assembleTx({
     sender: a.from, nonceSeq: a.nonce, chainId: a.chainId, maxFeePerGas: a.maxFeePerGas,
-    signature: SECP256K1_PLACEHOLDER,
     frames: [
-      frame(FRAME_MODE.VERIFY, APPROVE.BOTH, null, 30_000n),
+      frame("VERIFY", "EXECUTION_AND_PAYMENT", null, 30_000n),
       // state limit: a transfer to a brand-new account is charged state gas on this devnet
-      frame(FRAME_MODE.SENDER, 0, a.to, 50_000n, { value: a.value, state: 200_000n }),
+      frame("SENDER", undefined, a.to, 50_000n, { value: a.value, state: 200_000n }),
     ],
   });
 }
 
-/** Signs over computeSigHash and packs the result as `v(0/1) || r || s`. */
-export async function signFrameTx(tx: FrameTransaction, privateKey: Hex): Promise<FrameTransaction> {
-  const s = await sign({ hash: computeSigHash(tx), privateKey });
-  const v = (Number(s.v) - 27).toString(16).padStart(2, "0");
-  const packed = `0x${v}${s.r.slice(2)}${s.s.slice(2)}` as Hex;
-  return { ...tx, signatures: [{ ...tx.signatures[0], signature: packed }, ...tx.signatures.slice(1)] };
-}
+/** Signs over the signature hash and packs the result as `v(0/1) || r || s`. */
+export const signFrameTx = (tx: FrameTransaction, privateKey: Hex): Promise<FrameTransaction> => lib.signTx(profile, tx, privateKey);
 
 const hex = (n: bigint) => `0x${n.toString(16)}`;
 
@@ -84,7 +64,7 @@ export function toWire(tx: FrameTransaction): unknown {
   };
 }
 
-export const txHash = (tx: FrameTransaction): Hex => keccak256(encodeRawFrameTx(tx));
+export const txHash = (tx: FrameTransaction): Hex => lib.txHash(profile, tx);
 
 /** `[VERIFY(execution) on sender, VERIFY(payment) on paymaster, SENDER]`: the paymaster pays, the sender needs no ETH. */
 export function buildPaymasterTx(a: {
@@ -92,11 +72,10 @@ export function buildPaymasterTx(a: {
 }): FrameTransaction {
   return assembleTx({
     sender: a.from, nonceSeq: a.nonce, chainId: a.chainId, maxFeePerGas: a.maxFeePerGas,
-    signature: SECP256K1_PLACEHOLDER,
     frames: [
-      frame(FRAME_MODE.VERIFY, APPROVE.EXECUTION, null, 30_000n),
-      frame(FRAME_MODE.VERIFY, APPROVE.PAYMENT, a.paymaster, 50_000n),
-      frame(FRAME_MODE.SENDER, 0, a.to, 50_000n),
+      frame("VERIFY", "EXECUTION", null, 30_000n),
+      frame("VERIFY", "PAYMENT", a.paymaster, 50_000n),
+      frame("SENDER", undefined, a.to, 50_000n),
     ],
   });
 }
@@ -109,10 +88,10 @@ export function buildWalletTx(a: {
 }): FrameTransaction {
   return assembleTx({
     sender: a.wallet, nonceSeq: a.nonce, chainId: a.chainId, maxFeePerGas: a.maxFeePerGas,
-    signature: { ...SECP256K1_PLACEHOLDER, signer: a.owner },
+    signer: a.owner,
     frames: [
-      frame(FRAME_MODE.VERIFY, APPROVE.BOTH, null, 70_000n, { data: a.verifyData }),
-      frame(FRAME_MODE.SENDER, 0, a.to, 50_000n, { value: a.value, state: 200_000n }),
+      frame("VERIFY", "EXECUTION_AND_PAYMENT", null, 70_000n, { data: a.verifyData }),
+      frame("SENDER", undefined, a.to, 50_000n, { value: a.value, state: 200_000n }),
     ],
   });
 }
@@ -128,10 +107,10 @@ export function buildStakeTx(a: {
 }): FrameTransaction {
   return assembleTx({
     sender: a.wallet, nonceSeq: a.nonce, chainId: a.chainId, maxFeePerGas: a.maxFeePerGas,
-    signature: { ...SECP256K1_PLACEHOLDER, signer: a.owner },
+    signer: a.owner,
     frames: [
-      frame(FRAME_MODE.VERIFY, APPROVE.BOTH, null, 70_000n),
-      frame(FRAME_MODE.SENDER, 0, a.registry, 150_000n, {
+      frame("VERIFY", "EXECUTION_AND_PAYMENT", null, 70_000n),
+      frame("SENDER", undefined, a.registry, 150_000n, {
         value: a.amount, state: 300_000n,
         data: encodeFunctionData({ abi: ADD_STAKE_ABI, functionName: "addStake", args: [a.unstakeDelaySec] }),
       }),
