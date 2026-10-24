@@ -96,6 +96,8 @@ staking-forwarder function is needed.
 
 ## Check 5: concurrent funding (step 1): PASS with retries
 
+> **Superseded.** Step 1 no longer sends from a shared key: the node's faucet serializes the transfers, so there are no nonce collisions to retry. The result below explains why the shared key was dropped.
+
 10 simultaneous transfers from the shared key, each reading the pending nonce:
 - no retry: 1 of 10 succeeded;
 - up to 6 retries with a fresh nonce read and 150-450 ms jitter: 10 of 10 succeeded, at most 4

@@ -42,7 +42,7 @@ npm install
 npm run step_1_check
 ```
 
-`step_1_check` creates a throwaway key in `.env` (devnet only; never reuse it on a real network) and funds it from the devnet's shared key. Devnet: chain `1337`,
+`step_1_check` creates a throwaway key in `.env` (devnet only; never reuse it on a real network) and funds it from the devnet's faucet (1 ETH; also available as the **Faucet** button in the explorer). Devnet: chain `1337`,
 ethrex at `https://altmempool.forshtat.com`, Skandha (the mempool) at `https://altmempool.forshtat.com/rpc`,
 explorer at <https://altmempoolexplorer.forshtat.com/>. Override with env vars (`.env.example`).
 
@@ -55,7 +55,7 @@ outcome happened (for the "fail" steps, that means the rejection). Details and e
 
 | Command | You achieve |
 |---|---|
-| `npm run step_1_check` | Confirm the devnet, explorer and your funded key work |
+| `npm run step_1_check` | Confirm the devnet and explorer work, and fund your key |
 | `npm run step_2_tx_first` | Broadcast your first frame tx |
 | `npm run step_3_tx_paymaster` | Broadcast a frame tx paid for by a paymaster |
 | `npm run step_4_wallet_deploy` | Deploy your own validation-frame wallet contract |

@@ -1,11 +1,10 @@
 import { privateKeyToAccount } from "viem/accounts";
-import { fundFromFunder, getBalance } from "../lib/chain.js";
+import { fundFromFaucet, getBalance } from "../lib/chain.js";
 import { ensureParticipantKey, loadConfig } from "../lib/config.js";
 import { StepError, runStep } from "../lib/output.js";
 import { rpc } from "../lib/rpc.js";
 
 const MIN_BALANCE = 100_000_000_000_000_000n; // 0.1 ETH: enough for every step, with room for deployments
-const TOP_UP = 200_000_000_000_000_000n; // 0.2 ETH
 
 runStep("step_1_check", async (ctx) => {
   const cfg = loadConfig();
@@ -29,8 +28,8 @@ runStep("step_1_check", async (ctx) => {
   let balance = await getBalance(account.address);
   let funded = false;
   if (balance < MIN_BALANCE) {
-    ctx.log(`funding ${account.address} from the shared devnet key…`);
-    await fundFromFunder(account.address, TOP_UP);
+    ctx.log(`asking the faucet to fund ${account.address}…`);
+    await fundFromFaucet(account.address);
     balance = await getBalance(account.address);
     funded = true;
   }

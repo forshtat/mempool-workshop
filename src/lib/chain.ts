@@ -64,10 +64,20 @@ export async function waitMined(hash: Hex, timeoutMs = 120_000): Promise<any> {
   });
 }
 
-/** Funds `to` from the shared devnet key. Many participants share it, hence the retries. */
-export async function fundFromFunder(to: Address, amount: bigint): Promise<Hex> {
-  const hash = await sendLegacy(loadConfig().funderKey, { to, value: amount });
-  const receipt = await waitMined(hash);
-  if (receipt.status !== "0x1") throw new StepError("FUNDING_FAILED", `Funding transfer ${hash} reverted`);
-  return hash;
+/** Asks the node's faucet (`skandha_explorer_faucet`) to send ETH to `to`, and waits for the transfer to be mined. */
+export async function fundFromFaucet(to: Address): Promise<Hex> {
+  let result: { txHash: Hex };
+  try {
+    result = await rpc(loadConfig().skandhaUrl, "skandha_explorer_faucet", [to]);
+  } catch (e) {
+    if (!(e instanceof StepError) || e.code === "RPC_UNREACHABLE") throw e;
+    throw new StepError("FUNDING_FAILED", `The faucet refused ${to}: ${e.message}`, {
+      hint: e.code === "RPC_-32601"
+        ? "this node has no faucet; ask the workshop host to fund the address"
+        : "each address can ask once an hour; use the Faucet button in the explorer with another address, or ask the host",
+    });
+  }
+  const receipt = await waitMined(result.txHash);
+  if (receipt.status !== "0x1") throw new StepError("FUNDING_FAILED", `Funding transfer ${result.txHash} reverted`);
+  return result.txHash;
 }

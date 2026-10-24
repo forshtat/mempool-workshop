@@ -19,7 +19,7 @@ for the "fail" steps (6, 10) that is the rejection.
 
 | Command | Needs state from | Expected result |
 |---|---|---|
-| `step_1_check` | nothing | chain 1337, participant key in `.env`, balance > 0.1 ETH |
+| `step_1_check` | nothing | chain 1337, participant key in `.env`, balance > 0.1 ETH (funded by the faucet) |
 | `step_2_tx_first` | step 1 | tx mined, `frames: 2` |
 | `step_3_tx_paymaster` | step 1 | tx mined, paymaster balance dropped, sender balance 0 |
 | `step_4_wallet_deploy` | step 1 | `wallet` address in state |
@@ -48,12 +48,12 @@ Flags: `--json`, `--fresh` (redeploy contracts the step owns). State is in `.wor
 | `TX_NOT_MINED` | not mined within 120 s | devnet may be stalled; check the explorer |
 | `TX_REVERTED` | mined, but a frame failed | `step_11_debug -- <txHash>` |
 | `TX_UNKNOWN` | no node knows the hash | the explorer history is in memory only; check the hash |
-| `FUNDING_FAILED` | shared-key nonce collisions persisted | re-run `step_1_check` |
+| `FUNDING_FAILED` | the faucet refused (once per address per hour, empty, rate limited, or absent) | read `message`; use the explorer's **Faucet** button for another address or ask the host |
 
 ## Rules for agents
 
 - Never call `debug_bundler_clear*` or any other `debug_*` method that changes the node, except through `step_9_reputation_burn` on the participant's own wallet. They affect everyone on the devnet.
-- Never use the shared funder key (in `src/lib/config.ts`) for anything except funding. It is published on purpose and is only valid on this devnet.
+- There is no shared funded key in this repo: funding goes through the node's faucet (`skandha_explorer_faucet`). Never ask for, search for or use the devnet's genesis key.
 - Do not vendor or import from `skandha/packages/*/lib`: the built output can be stale. The codec in `src/lib/frameTx` is vendored from skandha `src`.
 - When a tx is rejected, do not guess: run `npm run step_11_debug -- <txHash>` for the rule-by-rule admission report.
 
