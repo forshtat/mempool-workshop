@@ -28,7 +28,7 @@ runStep("step_3_tx_paymaster", async (ctx) => {
     senderKey
   );
   ctx.log(`sender ${sender} holds 0 ETH; sending through paymaster ${paymaster}…`);
-  const hash = await sendFrameTx(tx, "skandha");
+  const hash = await sendFrameTx(tx);
   const receipt = await waitForReceipt(hash);
   writeState({ lastTxHash: hash });
 

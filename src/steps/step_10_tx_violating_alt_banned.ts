@@ -19,7 +19,7 @@ runStep("step_10_tx_violating_alt_banned", async (ctx) => {
   );
   ctx.log(`sending the step 8 tx again; the wallet's reputation is ${reputation.status}…`);
   try {
-    const hash = await sendFrameTx(tx, "skandha");
+    const hash = await sendFrameTx(tx);
     return { ok: false, summary: `accepted: ${hash}`, hint: "the wallet is not banned: run `npm run step_9_reputation_burn` first", data: { accepted: true, txHash: hash, reputation } };
   } catch (e) {
     if (!(e instanceof StepError) || !e.code.startsWith("RPC_")) throw e;

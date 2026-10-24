@@ -26,7 +26,7 @@ runStep("step_7_stake", async (ctx) => {
     ownerKey
   );
   ctx.log(`the wallet ${wallet} stakes itself with a SENDER frame calling the registry…`);
-  const hash = await sendFrameTx(tx, "skandha");
+  const hash = await sendFrameTx(tx);
   await waitForReceipt(hash);
 
   const after = await getStake(wallet);

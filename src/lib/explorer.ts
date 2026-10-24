@@ -22,7 +22,7 @@ export interface Reputation {
 }
 
 const defaultPager = (cursor?: string): Promise<ReputationPage> =>
-  rpc(loadConfig().skandhaUrl, "skandha_explorer_listReputation", [{ limit: 200, ...(cursor ? { cursor } : {}) }]);
+  rpc(loadConfig().gatewayUrl, "skandha_explorer_listReputation", [{ limit: 200, ...(cursor ? { cursor } : {}) }]);
 
 /** The explorer has no per-address lookup, so this walks its pages. An entity the node never saw is OK with zero counters. */
 export async function getReputation(address: Address, page: (cursor?: string) => Promise<ReputationPage> = defaultPager): Promise<Reputation> {
@@ -42,7 +42,7 @@ export async function getReputation(address: Address, page: (cursor?: string) =>
  * `debug_bundler_setReputation`. Real nodes restrict this method. Only ever call it for the participant's own entity.
  */
 export async function setReputation(address: Address, opsSeen: number, opsIncluded: number): Promise<void> {
-  await rpc(loadConfig().skandhaUrl, "debug_bundler_setReputation", [[{ address, opsSeen, opsIncluded }], loadConfig().entryPoint]);
+  await rpc(loadConfig().gatewayUrl, "debug_bundler_setReputation", [[{ address, opsSeen, opsIncluded }], loadConfig().entryPoint]);
 }
 
 
@@ -86,7 +86,7 @@ type DetailFetcher = (hash: Hex) => Promise<TransactionDetail | null>;
 
 const defaultDetail: DetailFetcher = async (hash) => {
   try {
-    return await rpc(loadConfig().skandhaUrl, "skandha_explorer_getTransaction", [hash]);
+    return await rpc(loadConfig().gatewayUrl, "skandha_explorer_getTransaction", [hash]);
   } catch (e) {
     if (e instanceof StepError && /not found/i.test(e.message)) return null;
     throw e;

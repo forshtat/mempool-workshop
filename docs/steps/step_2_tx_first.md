@@ -8,7 +8,7 @@ npm run step_2_tx_first      # add --json for one JSON object
 
 **Needs:** step 1
 
-**What it does:** A self-relay: one `VERIFY` frame (your key approves execution and payment) and one `SENDER` frame transferring 1 gwei. Sent to the standard alt-mempool (Skandha), then waits for ethrex's receipt.
+**What it does:** A self-relay: one `VERIFY` frame (your key approves execution and payment) and one `SENDER` frame transferring 1 gwei. Sent to the standard alt-mempool through the gateway, then waits for the receipt.
 
 **Expected output** (addresses and hashes differ):
 

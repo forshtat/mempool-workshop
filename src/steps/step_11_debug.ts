@@ -17,8 +17,8 @@ runStep("step_11_debug", async (ctx) => {
   const [admission, events, status, receipt] = await Promise.all([
     getAdmission(hash),
     getLifecycle(hash),
-    optional(rpc(cfg.skandhaUrl, "skandha_frameTransactionStatus", [hash])),
-    optional(rpc(cfg.ethrexUrl, "eth_getTransactionReceipt", [hash])),
+    optional(rpc(cfg.gatewayUrl, "skandha_frameTransactionStatus", [hash])),
+    optional(rpc(cfg.gatewayUrl, "eth_getTransactionReceipt", [hash])),
   ]);
   if (!admission && events.length === 0 && !status && !receipt) {
     throw new StepError("TX_UNKNOWN", `no node knows ${hash}`, {

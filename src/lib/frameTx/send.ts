@@ -7,17 +7,17 @@ import { toWire } from "./build.js";
 import { encodeRawFrameTx } from "./codec.js";
 import type { FrameTransaction } from "./types.js";
 
-export type Target = "skandha" | "ethrex";
+/** Submits to the standard alt-mempool (`eth_sendFrameTransaction`), through the gateway. */
+export async function sendFrameTx(tx: FrameTransaction): Promise<Hex> {
+  return await rpc(loadConfig().gatewayUrl, "eth_sendFrameTransaction", [toWire(tx)]);
+}
 
 /**
- * "skandha": the standard alt-mempool (`eth_sendFrameTransaction` on /rpc).
- * "ethrex": the canonical mempool (the raw type-0x06 tx via `eth_sendRawTransaction` on the root URL).
+ * Submits the raw type-0x06 transaction (`eth_sendRawTransaction`). The gateway forwards it to ethrex, so this is
+ * the canonical mempool's verdict.
  */
-export async function sendFrameTx(tx: FrameTransaction, target: Target): Promise<Hex> {
-  const cfg = loadConfig();
-  return target === "skandha"
-    ? await rpc(cfg.skandhaUrl, "eth_sendFrameTransaction", [toWire(tx)])
-    : await rpc(cfg.ethrexUrl, "eth_sendRawTransaction", [encodeRawFrameTx(tx)]);
+export async function sendRawFrameTx(tx: FrameTransaction): Promise<Hex> {
+  return await rpc(loadConfig().gatewayUrl, "eth_sendRawTransaction", [encodeRawFrameTx(tx)]);
 }
 
 export interface FrameReceipt {
@@ -40,7 +40,7 @@ export async function waitForReceipt(hash: Hex): Promise<FrameReceipt> {
 }
 
 export async function accountNonce(address: Address): Promise<bigint> {
-  return BigInt(await rpc(loadConfig().ethrexUrl, "eth_getTransactionCount", [address, "latest"]));
+  return BigInt(await rpc(loadConfig().gatewayUrl, "eth_getTransactionCount", [address, "latest"]));
 }
 
 export const explorerLink = (hash: Hex) => `${loadConfig().explorerUrl} (search ${hash})`;

@@ -7,17 +7,15 @@ import { rpc } from "../lib/rpc.js";
 
 runStep("step_1_check", async (ctx) => {
   const cfg = loadConfig();
-  for (const [label, url] of [["ethrex", cfg.ethrexUrl], ["skandha", cfg.skandhaUrl]] as const) {
-    const id = Number(await rpc(url, "eth_chainId", []));
-    if (id !== cfg.chainId) {
-      throw new StepError("WRONG_CHAIN", `${label} at ${url} reports chain ${id}, expected ${cfg.chainId}`, { hint: "update chainId / the URLs in workshop.config.json5, or the devnet was replaced" });
-    }
+  const id = Number(await rpc(cfg.gatewayUrl, "eth_chainId", []));
+  if (id !== cfg.chainId) {
+    throw new StepError("WRONG_CHAIN", `the gateway at ${cfg.gatewayUrl} reports chain ${id}, expected ${cfg.chainId}`, { hint: "update chainId / gatewayUrl in workshop.config.json5, or the devnet was replaced" });
   }
-  const skCfg = await rpc(cfg.skandhaUrl, "skandha_config", []);
+  const skCfg = await rpc(cfg.gatewayUrl, "skandha_config", []);
 
   let explorer = "available";
   try {
-    await rpc(cfg.skandhaUrl, "skandha_explorer_listReputation", [{ limit: 1 }]);
+    await rpc(cfg.gatewayUrl, "skandha_explorer_listReputation", [{ limit: 1 }]);
   } catch {
     explorer = "unavailable (steps still work, but step_10 and step_11 print less)";
     ctx.log("warning: Skandha explorer methods are not enabled on this node");

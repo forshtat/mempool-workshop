@@ -20,7 +20,7 @@ export async function rpc(url: string, method: string, params: unknown[] = []): 
     throw new StepError("RPC_BAD_RESPONSE", `${url} answered HTTP ${res.status} without JSON`, { hint: "the devnet may be restarting" });
   }
   if (body.error) {
-    const hint = body.error.code === -32601 ? `${url} does not implement ${method}; check the endpoint (ethrex root vs Skandha /rpc)` : undefined;
+    const hint = body.error.code === -32601 ? `${url} does not implement ${method}; check gatewayUrl in workshop.config.json5` : undefined;
     throw new StepError(`RPC_${body.error.code}`, body.error.message, { hint });
   }
   return body.result;

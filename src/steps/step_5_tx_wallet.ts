@@ -17,7 +17,7 @@ runStep("step_5_tx_wallet", async (ctx) => {
     ownerKey
   );
   ctx.log(`sending a tx whose sender is the wallet ${wallet}, signed by owner ${owner}…`);
-  const hash = await sendFrameTx(tx, "skandha");
+  const hash = await sendFrameTx(tx);
   const receipt = await waitForReceipt(hash);
   writeState({ lastTxHash: hash });
   const after = await getBalance(wallet);

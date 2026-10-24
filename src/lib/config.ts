@@ -11,8 +11,7 @@ export const CONFIG_FILE = fileURLToPath(new URL("../../workshop.config.json5", 
 
 export interface Config {
   chainId: number;
-  ethrexUrl: string;
-  skandhaUrl: string;
+  gatewayUrl: string;
   explorerUrl: string;
   stakingRegistry: Address;
   entryPoint: Address;
@@ -37,8 +36,7 @@ export interface Config {
 /** Each key of the file, how to check it, and where it lands in `Config`. */
 const FIELDS: { [K: string]: { kind: "int" | "string" | "address" | "eth" | "gwei"; to: keyof Config } } = {
   chainId: { kind: "int", to: "chainId" },
-  ethrexUrl: { kind: "string", to: "ethrexUrl" },
-  skandhaUrl: { kind: "string", to: "skandhaUrl" },
+  gatewayUrl: { kind: "string", to: "gatewayUrl" },
   explorerUrl: { kind: "string", to: "explorerUrl" },
   stakingRegistry: { kind: "address", to: "stakingRegistry" },
   entryPoint: { kind: "address", to: "entryPoint" },

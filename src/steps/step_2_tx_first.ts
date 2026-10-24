@@ -14,7 +14,7 @@ runStep("step_2_tx_first", async (ctx) => {
     key
   );
   ctx.log(`sending ${txHash(tx)} to the standard alt-mempool…`);
-  const hash = await sendFrameTx(tx, "skandha");
+  const hash = await sendFrameTx(tx);
   const receipt = await waitForReceipt(hash);
   writeState({ lastTxHash: hash });
   return {

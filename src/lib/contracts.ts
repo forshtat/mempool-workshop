@@ -94,6 +94,6 @@ export function decodeDepositInfo(hex: Hex): StakeInfo {
 
 export async function getStake(address: Address): Promise<StakeInfo> {
   const data = encodeFunctionData({ abi: DEPOSIT_INFO_ABI, functionName: "getDepositInfo", args: [address] });
-  const out = await rpc(loadConfig().ethrexUrl, "eth_call", [{ to: loadConfig().stakingRegistry, data }, "latest"]);
+  const out = await rpc(loadConfig().gatewayUrl, "eth_call", [{ to: loadConfig().stakingRegistry, data }, "latest"]);
   return decodeDepositInfo(out as Hex);
 }

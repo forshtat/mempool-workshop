@@ -19,7 +19,7 @@ runStep("step_8_tx_violating_alt", async (ctx) => {
   ctx.log("sending the step 6 tx to the standard alt-mempool (Skandha)…");
   let hash;
   try {
-    hash = await sendFrameTx(tx, "skandha");
+    hash = await sendFrameTx(tx);
   } catch (e) {
     if (!(e instanceof StepError) || !e.code.startsWith("RPC_")) throw e;
     const r = explainRejection(e.message);

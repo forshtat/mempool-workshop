@@ -24,14 +24,14 @@ export async function retry<T>(
 }
 
 export async function getBalance(address: Address): Promise<bigint> {
-  return BigInt(await rpc(loadConfig().ethrexUrl, "eth_getBalance", [address, "latest"]));
+  return BigInt(await rpc(loadConfig().gatewayUrl, "eth_getBalance", [address, "latest"]));
 }
 
 export async function getCode(address: Address): Promise<Hex> {
-  return await rpc(loadConfig().ethrexUrl, "eth_getCode", [address, "latest"]);
+  return await rpc(loadConfig().gatewayUrl, "eth_getCode", [address, "latest"]);
 }
 
-/** Sends a legacy transaction through ethrex. Re-reads the pending nonce on every attempt, so shared keys survive collisions. */
+/** Sends a legacy transaction through the gateway, which forwards it to ethrex. Re-reads the pending nonce on every attempt, so shared keys survive collisions. */
 export async function sendLegacy(
   key: Hex,
   tx: { to: Address | null; value?: bigint; data?: Hex; gas?: bigint },
@@ -40,12 +40,12 @@ export async function sendLegacy(
   const cfg = loadConfig();
   const account = privateKeyToAccount(key);
   return retry(async () => {
-    const nonce = Number(await rpc(cfg.ethrexUrl, "eth_getTransactionCount", [account.address, "pending"]));
+    const nonce = Number(await rpc(cfg.gatewayUrl, "eth_getTransactionCount", [account.address, "pending"]));
     const raw = await account.signTransaction({
       chainId: cfg.chainId, nonce, to: tx.to, value: tx.value ?? 0n, data: tx.data ?? "0x",
       gas: tx.gas ?? cfg.legacyGasLimit, gasPrice: cfg.legacyGasPriceWei, type: "legacy",
     });
-    return (await rpc(cfg.ethrexUrl, "eth_sendRawTransaction", [raw])) as Hex;
+    return (await rpc(cfg.gatewayUrl, "eth_sendRawTransaction", [raw])) as Hex;
   }, { retries });
 }
 
@@ -53,7 +53,7 @@ export async function waitMined(hash: Hex): Promise<any> {
   const cfg = loadConfig();
   const deadline = Date.now() + cfg.txTimeoutSec * 1000;
   while (Date.now() < deadline) {
-    const r = await rpc(cfg.ethrexUrl, "eth_getTransactionReceipt", [hash]);
+    const r = await rpc(cfg.gatewayUrl, "eth_getTransactionReceipt", [hash]);
     if (r) return r;
     await sleep(2000);
   }
@@ -66,7 +66,7 @@ export async function waitMined(hash: Hex): Promise<any> {
 export async function fundFromFaucet(to: Address): Promise<Hex> {
   let result: { txHash: Hex };
   try {
-    result = await rpc(loadConfig().skandhaUrl, "skandha_explorer_faucet", [to]);
+    result = await rpc(loadConfig().gatewayUrl, "skandha_explorer_faucet", [to]);
   } catch (e) {
     if (!(e instanceof StepError) || e.code === "RPC_UNREACHABLE") throw e;
     throw new StepError("FUNDING_FAILED", `The faucet refused ${to}: ${e.message}`, {

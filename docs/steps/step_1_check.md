@@ -8,12 +8,12 @@ npm run step_1_check      # add --json for one JSON object
 
 **Needs:** nothing
 
-**What it does:** Checks `eth_chainId` on ethrex and Skandha, reads `skandha_config` and the explorer, creates the participant key in `.workshop-state.json` if missing, and asks the Skandha node's faucet (`skandha_explorer_faucet`, 1 ETH) to fund the key when it holds less than `minBalanceEth` (0.1 ETH). There is no funded key in this repo.
+**What it does:** Checks `eth_chainId` on the gateway, reads `skandha_config` and the explorer, creates the participant key in `.workshop-state.json` if missing, and asks the Skandha node's faucet (`skandha_explorer_faucet`, 1 ETH) to fund the key when it holds less than `minBalanceEth` (0.1 ETH). There is no funded key in this repo.
 
 **Expected output** (addresses and hashes differ):
 
 ```
-chain 1337: ethrex and Skandha reachable
+chain 1337: gateway reachable
 participant: 0x588008bcF802e61cB98148701387f50A5Bc38e57
 balance: 1 ETH (just funded)
 explorer: available

@@ -4,10 +4,10 @@
 {
   // --- The devnet ---
   chainId: 1337,
-  // ethrex JSON-RPC: the canonical mempool, balances, receipts.
-  ethrexUrl: "https://altmempool.forshtat.com",
-  // Skandha JSON-RPC: the standard alt-mempool, the explorer methods and the faucet.
-  skandhaUrl: "https://altmempool.forshtat.com/rpc",
+  // The gateway Skandha node (/rpc). Everything goes through it: frame transactions into the
+  // standard alt-mempool, raw transactions on to the canonical mempool, the faucet, the explorer
+  // methods, and the standard eth_* reads. The gateway validates, then gossips to the miner.
+  gatewayUrl: "https://altmempoolgateway.forshtat.com/rpc",
   // The web explorer, only used to print links.
   explorerUrl: "https://altmempoolexplorer.forshtat.com/",
   // NaiveStakingRegistry: every stake is keyed on msg.sender.
