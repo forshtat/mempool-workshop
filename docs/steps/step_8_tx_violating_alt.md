@@ -22,4 +22,4 @@ next: npm run step_9_reputation_burn
 
 | Symptom / code | Cause | Fix |
 |---|---|---|
-| rejected `[STO] unstaked payer accessed …` | wallet not staked, or banned | run `step_7_stake`; if banned, `step_9_reputation_burn -- --reset` |
+| rejected `[STO] unstaked payer accessed …` | wallet not staked, or banned | run `step_7_stake`; if banned, `reset_reputation` |

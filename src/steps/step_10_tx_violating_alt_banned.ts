@@ -33,7 +33,7 @@ runStep("step_10_tx_violating_alt_banned", async (ctx) => {
         `tx hash: ${txHash(tx)} (debug with: npm run step_11_debug -- ${txHash(tx)})`,
         `reputation of ${wallet}: ${reputation.status} (opsSeen ${reputation.opsSeen}, opsIncluded ${reputation.opsIncluded}, staked ${reputation.isStaked})`,
         banned ? "why: the node's error text is generic (it treats the banned entity as unstaked), but the explorer shows the real cause: BANNED. A banned entity is excluded from the mempool even though it is staked." : "",
-        "undo: npm run step_9_reputation_burn -- --reset",
+        "undo: npm run reset_reputation",
       ].filter(Boolean).join("\n"),
       data: { accepted: false, txHash: txHash(tx), rule: r.rule, message: r.message, reputation },
     };

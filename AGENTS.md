@@ -27,7 +27,7 @@ for the "fail" steps (6, 10) that is the rejection.
 | `step_6_tx_violating_canonical` | step 1 | ethrex rejected with `StorageReadNonSender` (exit 0) |
 | `step_7_stake` | step 6 | registry shows stake 0.012 ETH |
 | `step_8_tx_violating_alt` | step 7 | tx accepted and mined |
-| `step_9_reputation_burn` | step 6 | explorer shows `BANNED` (**declared shortcut**; `-- --reset` undoes it) |
+| `step_9_reputation_burn` | step 6 | explorer shows `BANNED` (**declared shortcut**; `npm run reset_reputation` undoes it) |
 | `step_10_tx_violating_alt_banned` | step 9 | rejected, explorer shows `BANNED` (exit 0) |
 | `step_11_debug -- <txHash>` | none (defaults to the last tx) | admission report, lifecycle, status |
 

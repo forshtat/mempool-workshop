@@ -119,7 +119,7 @@ is cheating (see the design doc). Verified on the devnet with the probe wallet:
   the ban. Step 10 must therefore print the explorer's reputation status next to the error.
 - `opsSeen` 0, `opsIncluded` 0 restores the entity (`ok`), and the next tx was admitted.
 
-So step 9 sets `opsSeen: 10000, opsIncluded: 0` (BANNED), and `step_9_reputation_burn -- --reset`
+So step 9 sets `opsSeen: 10000, opsIncluded: 0` (BANNED), and `reset_reputation`
 restores `0, 0`. Never call `debug_bundler_clearReputation` or any other `clear*` or `set*` method.
 Those affect every user of the devnet.
 
