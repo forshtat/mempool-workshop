@@ -25,15 +25,15 @@ runStep("step_8_tx_violating_alt", async (ctx) => {
     const r = explainRejection(e.message);
     return {
       ok: false,
-      summary: `rejected [${r.rule}] ${r.message}\ntx hash: ${txHash(tx)} (debug with: npm run step_11_debug -- ${txHash(tx)})`,
-      hint: r.rule === "STO" ? "the wallet is not (or no longer) staked: run `npm run step_7_stake`; if it is banned, run `npm run reset_reputation`" : r.hint,
+      summary: `rejected [${r.rule}] ${r.message}\ntx hash: ${txHash(tx)} (debug with: yarn step_11_debug ${txHash(tx)})`,
+      hint: r.rule === "STO" ? "the wallet is not (or no longer) staked: run `yarn step_7_stake`; if it is banned, run `yarn reset_reputation`" : r.hint,
       data: { wallet, accepted: false, txHash: txHash(tx), rule: r.rule, message: r.message },
     };
   }
   const receipt = await waitForReceipt(hash);
   writeState({ lastTxHash: hash });
   return {
-    summary: [`accepted and mined: ${hash}`, "the same tx the canonical mempool rejected in step 6 (the wallet reads foreign storage; staking relaxes that rule)", `explorer: ${explorerLink(hash)}`, "next: npm run step_9_reputation_burn"].join("\n"),
+    summary: [`accepted and mined: ${hash}`, "the same tx the canonical mempool rejected in step 6 (the wallet reads foreign storage; staking relaxes that rule)", `explorer: ${explorerLink(hash)}`, "next: yarn step_9_reputation_burn"].join("\n"),
     data: { txHash: hash, block: Number(receipt.blockNumber), wallet, accepted: true },
   };
 });

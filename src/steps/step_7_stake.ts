@@ -16,7 +16,7 @@ runStep("step_7_stake", async (ctx) => {
   const existing = await getStake(wallet);
   if (existing.amount >= cfg.stakeWei && existing.withdrawTime === 0) {
     return {
-      summary: `wallet ${wallet} is already staked: ${Number(existing.amount) / 1e18} ETH, unstake delay ${existing.unstakeDelay}s\nnext: npm run step_8_tx_violating_alt`,
+      summary: `wallet ${wallet} is already staked: ${Number(existing.amount) / 1e18} ETH, unstake delay ${existing.unstakeDelay}s\nnext: yarn step_8_tx_violating_alt`,
       data: { wallet, staked: true, alreadyStaked: true, stakeWei: existing.amount.toString(), unstakeDelaySec: existing.unstakeDelay },
     };
   }
@@ -31,11 +31,11 @@ runStep("step_7_stake", async (ctx) => {
 
   const after = await getStake(wallet);
   if (after.amount < cfg.stakeWei) {
-    throw new StepError("STAKE_NOT_RECORDED", `the tx was mined but the registry shows ${after.amount} wei for ${wallet}`, { hint: "run `npm run step_11_debug -- " + hash + "`" });
+    throw new StepError("STAKE_NOT_RECORDED", `the tx was mined but the registry shows ${after.amount} wei for ${wallet}`, { hint: "run `yarn step_11_debug " + hash + "`" });
   }
   const explorerStaked = await getReputation(wallet).then((r) => r.isStaked, () => undefined);
   return {
-    summary: [`staked: ${hash}`, `wallet ${wallet}: ${Number(after.amount) / 1e18} ETH, unstake delay ${after.unstakeDelay}s`, `explorer: ${explorerLink(hash)}`, "next: npm run step_8_tx_violating_alt"].join("\n"),
+    summary: [`staked: ${hash}`, `wallet ${wallet}: ${Number(after.amount) / 1e18} ETH, unstake delay ${after.unstakeDelay}s`, `explorer: ${explorerLink(hash)}`, "next: yarn step_8_tx_violating_alt"].join("\n"),
     data: { txHash: hash, wallet, staked: true, alreadyStaked: false, stakeWei: after.amount.toString(), unstakeDelaySec: after.unstakeDelay, explorerIsStaked: explorerStaked ?? null },
   };
 });

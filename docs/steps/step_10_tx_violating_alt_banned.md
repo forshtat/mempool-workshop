@@ -3,7 +3,7 @@
 **Goal:** Fail to send the tx because of low reputation.
 
 ```sh
-npm run step_10_tx_violating_alt_banned      # add --json for one JSON object
+yarn step_10_tx_violating_alt_banned      # add --json for one JSON object
 ```
 
 **Needs:** step 9
@@ -14,10 +14,10 @@ npm run step_10_tx_violating_alt_banned      # add --json for one JSON object
 
 ```
 rejected: unstaked payer accessed 0x902d…bd11 slot 0x00…00
-tx hash: 0x8466…9127 (debug with: npm run step_11_debug -- 0x8466…9127)
+tx hash: 0x8466…9127 (debug with: yarn step_11_debug 0x8466…9127)
 reputation of 0xabe9…e2: BANNED (opsSeen 10000, opsIncluded 0, staked true)
 why: the node's error text is generic …
-undo: npm run reset_reputation
+undo: yarn reset_reputation
 ```
 
 **If it fails**

@@ -3,7 +3,7 @@
 **Goal:** Send the same tx to the standard alt-mempool.
 
 ```sh
-npm run step_8_tx_violating_alt      # add --json for one JSON object
+yarn step_8_tx_violating_alt      # add --json for one JSON object
 ```
 
 **Needs:** step 7
@@ -15,7 +15,7 @@ npm run step_8_tx_violating_alt      # add --json for one JSON object
 ```
 accepted and mined: 0xbf09…c066
 the same tx the canonical mempool rejected in step 6 (the wallet reads foreign storage; staking relaxes that rule)
-next: npm run step_9_reputation_burn
+next: yarn step_9_reputation_burn
 ```
 
 **If it fails**

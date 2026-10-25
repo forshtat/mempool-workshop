@@ -3,12 +3,12 @@
 **Goal:** Get the entity banned. **This step cheats.**
 
 ```sh
-npm run step_9_reputation_burn      # add --json for one JSON object
+yarn step_9_reputation_burn      # add --json for one JSON object
 ```
 
 **Needs:** step 6
 
-**What it does:** Reputation normally falls because an entity keeps producing txs that are admitted but never included. That cannot be reproduced reliably on the devnet, so this step writes `opsSeen 10000, opsIncluded 0` for **your wallet only** with the devnet's open `debug_bundler_setReputation`, and waits until the explorer shows `BANNED`. To undo it, run `npm run reset_reputation` (not a step; see [reset_reputation](../reset_reputation.md)). Throttled alone still admits a tx (it only caps the entity at 4 mempool entries); only a ban rejects.
+**What it does:** Reputation normally falls because an entity keeps producing txs that are admitted but never included. That cannot be reproduced reliably on the devnet, so this step writes `opsSeen 10000, opsIncluded 0` for **your wallet only** with the devnet's open `debug_bundler_setReputation`, and waits until the explorer shows `BANNED`. To undo it, run `yarn reset_reputation` (not a step; see [reset_reputation](../reset_reputation.md)). Throttled alone still admits a tx (it only caps the entity at 4 mempool entries); only a ban rejects.
 
 **Expected output** (addresses and hashes differ):
 
@@ -16,7 +16,7 @@ npm run step_9_reputation_burn      # add --json for one JSON object
 THIS CHEATS.
 …
 reputation of 0xabe9…e2: BANNED (opsSeen 10000, opsIncluded 0, staked true)
-next: npm run step_10_tx_violating_alt_banned   (undo with: npm run reset_reputation)
+next: yarn step_10_tx_violating_alt_banned   (undo with: yarn reset_reputation)
 ```
 
 **If it fails**

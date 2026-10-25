@@ -11,7 +11,7 @@ runStep("reset_reputation", async () => {
   await setReputation(wallet, 0, 0);
   const r = await waitForReputation(wallet, "OK");
   return {
-    summary: [CHEAT_NOTICE, "", `reputation of ${wallet} reset: ${r.status} (opsSeen ${r.opsSeen}, opsIncluded ${r.opsIncluded})`, "next: npm run step_8_tx_violating_alt   (accepted again while the wallet is staked)"].join("\n"),
+    summary: [CHEAT_NOTICE, "", `reputation of ${wallet} reset: ${r.status} (opsSeen ${r.opsSeen}, opsIncluded ${r.opsIncluded})`, "next: yarn step_8_tx_violating_alt   (accepted again while the wallet is staked)"].join("\n"),
     data: { shortcut: true, wallet, ...r },
   };
 });

@@ -3,7 +3,7 @@
 **Goal:** Send a tx validated by your wallet.
 
 ```sh
-npm run step_5_tx_wallet      # add --json for one JSON object
+yarn step_5_tx_wallet      # add --json for one JSON object
 ```
 
 **Needs:** step 4
@@ -15,7 +15,7 @@ npm run step_5_tx_wallet      # add --json for one JSON object
 ```
 wallet tx mined: 0x8361…34f6
 wallet balance: 0.01 -> 0.009931133 ETH (it paid)
-next: npm run step_6_tx_violating_canonical
+next: yarn step_6_tx_violating_canonical
 ```
 
 **If it fails**

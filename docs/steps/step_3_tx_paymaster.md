@@ -3,7 +3,7 @@
 **Goal:** Broadcast a frame tx paid for by a paymaster.
 
 ```sh
-npm run step_3_tx_paymaster      # add --json for one JSON object, --fresh to redeploy
+yarn step_3_tx_paymaster      # add --json for one JSON object, --fresh to redeploy
 ```
 
 **Needs:** step 1

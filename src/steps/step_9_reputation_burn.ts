@@ -11,7 +11,7 @@ runStep("step_9_reputation_burn", async () => {
   await setReputation(wallet, loadConfig().banOpsSeenPenalty, 0);
   const r = await waitForReputation(wallet, "BANNED");
   return {
-    summary: [CHEAT_NOTICE, "", `reputation of ${wallet}: ${r.status} (opsSeen ${r.opsSeen}, opsIncluded ${r.opsIncluded}, staked ${r.isStaked})`, "next: npm run step_10_tx_violating_alt_banned   (undo with: npm run reset_reputation)"].join("\n"),
+    summary: [CHEAT_NOTICE, "", `reputation of ${wallet}: ${r.status} (opsSeen ${r.opsSeen}, opsIncluded ${r.opsIncluded}, staked ${r.isStaked})`, "next: yarn step_10_tx_violating_alt_banned   (undo with: yarn reset_reputation)"].join("\n"),
     data: { shortcut: true, wallet, ...r },
   };
 });

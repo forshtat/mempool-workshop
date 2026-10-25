@@ -3,7 +3,7 @@
 **Not a workshop step.** Undoes [step 9](steps/step_9_reputation_burn.md) so your wallet can send again.
 
 ```sh
-npm run reset_reputation      # add --json for one JSON object
+yarn reset_reputation      # add --json for one JSON object
 ```
 
 **Needs:** step 6 (it reads your wallet from the state file; there is no address argument)

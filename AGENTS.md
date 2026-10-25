@@ -15,7 +15,7 @@ Do not call the standard alt-mempool "canonical", and do not say "standard mempo
 
 ## Commands
 
-All are `npm run <name>`. Pass `--json` for exactly one JSON object on stdout (logs go to stderr). Steps refuse to run out of order: a step runs only after the steps in the table's "Needs state from" column have reached their expected outcome, and only with the key step 1 recorded. Exit 0 means the **expected** outcome happened;
+All are `yarn <name>`. Pass `--json` for exactly one JSON object on stdout (logs go to stderr). Steps refuse to run out of order: a step runs only after the steps in the table's "Needs state from" column have reached their expected outcome, and only with the key step 1 recorded. Exit 0 means the **expected** outcome happened;
 for the "fail" steps (6, 10) that is the rejection.
 
 | Command | Needs state from | Expected result |
@@ -28,7 +28,7 @@ for the "fail" steps (6, 10) that is the rejection.
 | `step_6_tx_violating_canonical` | step 1 | the canonical mempool (ethrex, via the gateway) rejected with `StorageReadNonSender` (exit 0) |
 | `step_7_stake` | step 6 | registry shows stake 0.012 ETH |
 | `step_8_tx_violating_alt` | step 7 | tx accepted and mined |
-| `step_9_reputation_burn` | step 6 | explorer shows `BANNED` (**declared shortcut**; `npm run reset_reputation` undoes it) |
+| `step_9_reputation_burn` | step 6 | explorer shows `BANNED` (**declared shortcut**; `yarn reset_reputation` undoes it) |
 | `step_10_tx_violating_alt_banned` | step 9 | rejected, explorer shows `BANNED` (exit 0) |
 | `step_11_debug -- <txHash>` | none (defaults to the last tx) | admission report, lifecycle, status |
 
@@ -59,7 +59,7 @@ Flags: `--json`, `--fresh` (redeploy contracts the step owns). Config is `worksh
 - Never call `debug_bundler_clear*` or any other `debug_*` method that changes the node, except through `step_9_reputation_burn` and `reset_reputation` on the participant's own wallet. They affect everyone on the devnet.
 - There is no shared funded key in this repo: funding goes through the node's faucet (`skandha_explorer_faucet`). Never ask for, search for or use the devnet's genesis key.
 - Do not vendor or import from `skandha/packages/*/lib`: the built output can be stale. The codec comes from the `hegota-frames` package (`src/lib/frameTx` only binds it to this devnet's profile and keeps the workshop's gas numbers); the Skandha JSON shape (`toWire`) is still here.
-- When a tx is rejected, do not guess: run `npm run step_11_debug -- <txHash>` for the rule-by-rule admission report.
+- When a tx is rejected, do not guess: run `yarn step_11_debug <txHash>` for the rule-by-rule admission report.
 
 ## Facts that explain failures
 

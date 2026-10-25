@@ -22,7 +22,7 @@ runStep("step_5_tx_wallet", async (ctx) => {
   writeState({ lastTxHash: hash });
   const after = await getBalance(wallet);
   return {
-    summary: [`wallet tx mined: ${hash}`, `wallet balance: ${Number(before) / 1e18} -> ${Number(after) / 1e18} ETH (it paid)`, `explorer: ${explorerLink(hash)}`, `next: npm run step_6_tx_violating_canonical`].join("\n"),
+    summary: [`wallet tx mined: ${hash}`, `wallet balance: ${Number(before) / 1e18} -> ${Number(after) / 1e18} ETH (it paid)`, `explorer: ${explorerLink(hash)}`, `next: yarn step_6_tx_violating_canonical`].join("\n"),
     data: { txHash: hash, block: Number(receipt.blockNumber), wallet, owner, walletBalanceBefore: before.toString(), walletBalanceAfter: after.toString() },
   };
 });

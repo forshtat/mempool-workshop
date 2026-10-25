@@ -34,12 +34,12 @@ Not sure which mempool your contract needs? Read the [decision guide](docs/decis
 
 ## Quick start
 
-Needs Node 20.12 or newer and npm. Foundry is optional (only to change the contracts).
+Needs Node 20.12 or newer and yarn (v1). Foundry is optional (only to change the contracts).
 
 ```sh
 git clone https://github.com/forshtat/mempool-workshop.git && cd mempool-workshop
-npm install
-npm run step_1_check
+yarn install
+yarn step_1_check
 ```
 
 `step_1_check` creates a throwaway key in `.workshop-state.json` (devnet only; never reuse it on a real network) and funds it from the devnet's faucet (1 ETH; also available as the **Faucet** button in the explorer). Devnet: chain `1337`,
@@ -55,17 +55,17 @@ outcome happened (for the "fail" steps, that means the rejection). Details and e
 
 | Command | You achieve |
 |---|---|
-| `npm run step_1_check` | Confirm the devnet and explorer work, and fund your key |
-| `npm run step_2_tx_first` | Broadcast your first frame tx |
-| `npm run step_3_tx_paymaster` | Broadcast a frame tx paid for by a paymaster |
-| `npm run step_4_wallet_deploy` | Deploy your own validation-frame wallet contract |
-| `npm run step_5_tx_wallet` | Send a tx validated by your wallet |
-| `npm run step_6_tx_violating_canonical` | **Fail** to broadcast a rule-violating tx to the canonical mempool |
-| `npm run step_7_stake` | Stake the wallet |
-| `npm run step_8_tx_violating_alt` | Send **the same tx** to the standard alt-mempool: accepted |
-| `npm run step_9_reputation_burn` | Get the entity banned (**a declared shortcut**, see above) |
-| `npm run step_10_tx_violating_alt_banned` | **Fail** to send the tx because of low reputation |
-| `npm run step_11_debug -- <txHash>` | Debug any tx: admission report, lifecycle, status |
+| `yarn step_1_check` | Confirm the devnet and explorer work, and fund your key |
+| `yarn step_2_tx_first` | Broadcast your first frame tx |
+| `yarn step_3_tx_paymaster` | Broadcast a frame tx paid for by a paymaster |
+| `yarn step_4_wallet_deploy` | Deploy your own validation-frame wallet contract |
+| `yarn step_5_tx_wallet` | Send a tx validated by your wallet |
+| `yarn step_6_tx_violating_canonical` | **Fail** to broadcast a rule-violating tx to the canonical mempool |
+| `yarn step_7_stake` | Stake the wallet |
+| `yarn step_8_tx_violating_alt` | Send **the same tx** to the standard alt-mempool: accepted |
+| `yarn step_9_reputation_burn` | Get the entity banned (**a declared shortcut**, see above) |
+| `yarn step_10_tx_violating_alt_banned` | **Fail** to send the tx because of low reputation |
+| `yarn step_11_debug <txHash>` | Debug any tx: admission report, lifecycle, status |
 
 Run them in order the first time. State (deployed addresses, last tx hash) lives in `.workshop-state.json`. If the devnet was reset, the recorded
 addresses are gone: re-run the deploy steps with `--fresh`.
@@ -78,11 +78,11 @@ Point your agent at [`AGENTS.md`](AGENTS.md). Every step can be run alone, `--js
 
 ```
 contracts/src        Solidity: SponsorPaymaster, ExampleWallet, ViolatingWallet (+ tests in contracts/test)
-contracts/artifacts  compiled output, committed (steps run without foundry); rebuild with `npm run build:contracts`
+contracts/artifacts  compiled output, committed (steps run without foundry); rebuild with `yarn build:contracts`
 src/steps            one file per step
 src/lib              frame tx codec and builders, RPC, explorer, state
 docs/steps           runbook per step
 docs/findings.md     what was verified on the devnet, and why the contracts look the way they do
 ```
 
-Contract tests: `forge install foundry-rs/forge-std --no-git --root contracts` once, then `npm run test:contracts`. TypeScript tests: `npm test`.
+Contract tests: `forge install foundry-rs/forge-std --no-git --root contracts` once, then `yarn test:contracts`. TypeScript tests: `yarn test`.

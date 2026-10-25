@@ -3,7 +3,7 @@
 **Goal:** Deploy your own validation-frame wallet contract.
 
 ```sh
-npm run step_4_wallet_deploy      # add --json for one JSON object, --fresh to redeploy
+yarn step_4_wallet_deploy      # add --json for one JSON object, --fresh to redeploy
 ```
 
 **Needs:** step 1
@@ -16,7 +16,7 @@ npm run step_4_wallet_deploy      # add --json for one JSON object, --fresh to r
 ExampleWallet deployed: 0x357e0747cd81125d1e607ae4fc6ac5ccba03594b
 owner: 0x5880…8e57
 balance: 0.01 ETH
-next: npm run step_5_tx_wallet
+next: yarn step_5_tx_wallet
 ```
 
 **If it fails**

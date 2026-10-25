@@ -18,7 +18,7 @@ runStep("step_2_tx_first", async (ctx) => {
   const receipt = await waitForReceipt(hash);
   writeState({ lastTxHash: hash });
   return {
-    summary: [`frame tx mined: ${hash}`, `block: ${Number(receipt.blockNumber)}`, `frames: ${receipt.frameReceipts?.length} (all succeeded)`, `explorer: ${explorerLink(hash)}`, `next: npm run step_3_tx_paymaster`].join("\n"),
+    summary: [`frame tx mined: ${hash}`, `block: ${Number(receipt.blockNumber)}`, `frames: ${receipt.frameReceipts?.length} (all succeeded)`, `explorer: ${explorerLink(hash)}`, `next: yarn step_3_tx_paymaster`].join("\n"),
     data: { txHash: hash, block: Number(receipt.blockNumber), frames: receipt.frameReceipts?.length ?? 0 },
   };
 });

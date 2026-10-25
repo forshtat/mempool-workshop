@@ -33,7 +33,7 @@ export async function waitForReceipt(hash: Hex): Promise<FrameReceipt> {
   const failed = (r.frameReceipts ?? []).map((f, i) => ({ i, ok: f.status === "0x1" })).filter((f) => !f.ok);
   if (r.status !== "0x1" || failed.length) {
     throw new StepError("TX_REVERTED", `Transaction ${hash} was mined but frame(s) ${failed.map((f) => f.i).join(", ") || "?"} failed`, {
-      hint: "run `npm run step_11_debug -- " + hash + "`",
+      hint: "run `yarn step_11_debug " + hash + "`",
     });
   }
   return r;
@@ -57,7 +57,7 @@ export function explainRejection(message: string): Rejection {
     return { rule: "OP-011", message, hint: "validation code may not use environment opcodes (TIMESTAMP, NUMBER, BALANCE…); remove the opcode" };
   }
   if (/StorageReadNonSender|accessed 0x[0-9a-f]+ slot/i.test(message)) {
-    return { rule: "STO", message, hint: "validation may only touch the sender's own or associated storage; a staked entity may read more in the standard alt-mempool (npm run step_7_stake)" };
+    return { rule: "STO", message, hint: "validation may only touch the sender's own or associated storage; a staked entity may read more in the standard alt-mempool (yarn step_7_stake)" };
   }
-  return { rule: "UNKNOWN", message, hint: "run `npm run step_11_debug -- <txHash>` if the tx was accepted, or check the node's error text" };
+  return { rule: "UNKNOWN", message, hint: "run `yarn step_11_debug <txHash>` if the tx was accepted, or check the node's error text" };
 }

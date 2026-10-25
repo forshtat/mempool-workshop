@@ -59,8 +59,8 @@ runStep("step_6_tx_violating_canonical", async (ctx) => {
       line("standard alt-mempool (Skandha)", alt),
       canonical.accepted ? "" : `why: ${canonical.rejection!.hint}`,
       `wallet: ${wallet}`,
-      staked ? `tx hash: ${txHash(tx)}` : `tx hash: ${txHash(tx)} (debug with: npm run step_11_debug -- ${txHash(tx)})`,
-      staked ? "next: npm run step_8_tx_violating_alt (the wallet is already staked)" : "next: npm run step_7_stake",
+      staked ? `tx hash: ${txHash(tx)}` : `tx hash: ${txHash(tx)} (debug with: yarn step_11_debug ${txHash(tx)})`,
+      staked ? "next: yarn step_8_tx_violating_alt (the wallet is already staked)" : "next: yarn step_7_stake",
     ].filter(Boolean).join("\n"),
     data: { wallet, txHash: txHash(tx), canonical, alt, rule: canonical.rejection?.rule ?? null },
   };

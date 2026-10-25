@@ -11,7 +11,7 @@ runStep("step_11_debug", async (ctx) => {
   const cfg = loadConfig();
   const hash = (ctx.args[0] ?? readState().lastTxHash) as Hex | undefined;
   if (!hash || !/^0x[0-9a-fA-F]{64}$/.test(hash)) {
-    throw new StepError("BAD_ARGUMENT", "pass a 32-byte tx hash", { hint: "npm run step_11_debug -- 0x<txHash>; steps 6, 8 and 10 print the hash of the tx they sent" });
+    throw new StepError("BAD_ARGUMENT", "pass a 32-byte tx hash", { hint: "yarn step_11_debug 0x<txHash>; steps 6, 8 and 10 print the hash of the tx they sent" });
   }
 
   const [admission, events, status, receipt] = await Promise.all([

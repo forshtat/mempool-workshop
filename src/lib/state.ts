@@ -41,7 +41,7 @@ export function resetState(): void {
 export function requireState<K extends keyof WorkshopState>(key: K, createdBy: string): NonNullable<WorkshopState[K]> {
   const v = readState()[key];
   if (v == null) {
-    throw new StepError("STATE_MISSING", `No "${key}" in ${file()}`, { hint: `run \`npm run ${createdBy}\` first` });
+    throw new StepError("STATE_MISSING", `No "${key}" in ${file()}`, { hint: `run \`yarn ${createdBy}\` first` });
   }
   return v as NonNullable<WorkshopState[K]>;
 }

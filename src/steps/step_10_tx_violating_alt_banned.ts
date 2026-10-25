@@ -20,7 +20,7 @@ runStep("step_10_tx_violating_alt_banned", async (ctx) => {
   ctx.log(`sending the step 8 tx again; the wallet's reputation is ${reputation.status}…`);
   try {
     const hash = await sendFrameTx(tx);
-    return { ok: false, summary: `accepted: ${hash}`, hint: "the wallet is not banned: run `npm run step_9_reputation_burn` first", data: { accepted: true, txHash: hash, reputation } };
+    return { ok: false, summary: `accepted: ${hash}`, hint: "the wallet is not banned: run `yarn step_9_reputation_burn` first", data: { accepted: true, txHash: hash, reputation } };
   } catch (e) {
     if (!(e instanceof StepError) || !e.code.startsWith("RPC_")) throw e;
     const r = explainRejection(e.message);
@@ -30,10 +30,10 @@ runStep("step_10_tx_violating_alt_banned", async (ctx) => {
       hint: "the tx was rejected, but the wallet is not banned, so reputation is not the cause; the wallet may be unstaked (step_7_stake) or banned status was reset",
       summary: [
         `rejected: ${r.message}`,
-        `tx hash: ${txHash(tx)} (debug with: npm run step_11_debug -- ${txHash(tx)})`,
+        `tx hash: ${txHash(tx)} (debug with: yarn step_11_debug ${txHash(tx)})`,
         `reputation of ${wallet}: ${reputation.status} (opsSeen ${reputation.opsSeen}, opsIncluded ${reputation.opsIncluded}, staked ${reputation.isStaked})`,
         banned ? "why: the node's error text is generic (it treats the banned entity as unstaked), but the explorer shows the real cause: BANNED. A banned entity is excluded from the mempool even though it is staked." : "",
-        "undo: npm run reset_reputation",
+        "undo: yarn reset_reputation",
       ].filter(Boolean).join("\n"),
       data: { accepted: false, txHash: txHash(tx), rule: r.rule, message: r.message, reputation },
     };

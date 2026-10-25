@@ -3,7 +3,7 @@
 **Goal:** Confirm the devnet, explorer and your own funded key work.
 
 ```sh
-npm run step_1_check      # add --json for one JSON object
+yarn step_1_check      # add --json for one JSON object
 ```
 
 **Needs:** nothing. It also **resets the workshop**: the addresses and finished steps in `.workshop-state.json` are forgotten (the participant key stays, because the faucet funds each address once an hour), and it records the key's address. Every other step then refuses to run before the steps it needs have finished (`STEP_ORDER`), or if the key is no longer the recorded one (`STATE_KEY_CHANGED`).

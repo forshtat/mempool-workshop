@@ -3,7 +3,7 @@
 **Goal:** Debug any tx from its hash.
 
 ```sh
-npm run step_11_debug -- <txHash>      # add --json for one JSON object
+yarn step_11_debug <txHash>      # add --json for one JSON object
 ```
 
 **Needs:** none (a hash)

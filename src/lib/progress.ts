@@ -33,21 +33,21 @@ export function blockedBy(name: string, state: WorkshopState): StepError | null 
   const needs = PREREQUISITES[name];
   if (needs === undefined || name === FIRST) return null;
   if (!state.account) {
-    return new StepError("STEP_ORDER", `${name} needs the workshop to be set up`, { hint: `run \`npm run ${FIRST}\` first` });
+    return new StepError("STEP_ORDER", `${name} needs the workshop to be set up`, { hint: `run \`yarn ${FIRST}\` first` });
   }
   const current = state.participantKey ? privateKeyToAccount(state.participantKey).address : undefined;
   if (current?.toLowerCase() !== state.account.toLowerCase()) {
     return new StepError(
       "STATE_KEY_CHANGED",
       `the participant key (${current ?? "none"}) is not the one step 1 set this workshop up for (${state.account})`,
-      { hint: `everything deployed so far belongs to that key; run \`npm run ${FIRST}\` again, which resets the workshop` },
+      { hint: `everything deployed so far belongs to that key; run \`yarn ${FIRST}\` again, which resets the workshop` },
     );
   }
   const done = state.completedSteps ?? [];
   const missing = needs.filter((n) => !done.includes(n));
   if (missing.length === 0) return null;
   return new StepError("STEP_ORDER", `${name} needs ${missing.join(", ")} to have finished first`, {
-    hint: `run ${missing.map((m) => `\`npm run ${m}\``).join(", ")}`,
+    hint: `run ${missing.map((m) => `\`yarn ${m}\``).join(", ")}`,
   });
 }
 

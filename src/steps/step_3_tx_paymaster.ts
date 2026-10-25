@@ -39,10 +39,10 @@ runStep("step_3_tx_paymaster", async (ctx) => {
       `sender balance: ${senderBalance} wei (it never held ETH)`,
       `paymaster ${paymaster}: ${Number(before) / 1e18} -> ${Number(after) / 1e18} ETH (it paid)`,
       `explorer: ${explorerLink(hash)}`,
-      `next: npm run step_4_wallet_deploy`,
+      `next: yarn step_4_wallet_deploy`,
     ].join("\n"),
     data: { txHash: hash, block: Number(receipt.blockNumber), sender, paymaster, paymasterBalanceBefore: before.toString(), paymasterBalanceAfter: after.toString(), senderBalance: senderBalance.toString() },
     ok: after < before && senderBalance === 0n,
-    hint: "the paymaster balance did not drop, so it did not pay; run `npm run step_11_debug` on the tx hash",
+    hint: "the paymaster balance did not drop, so it did not pay; run `yarn step_11_debug` on the tx hash",
   };
 });

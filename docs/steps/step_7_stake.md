@@ -3,7 +3,7 @@
 **Goal:** Stake the wallet.
 
 ```sh
-npm run step_7_stake      # add --json for one JSON object
+yarn step_7_stake      # add --json for one JSON object
 ```
 
 **Needs:** step 6
@@ -16,7 +16,7 @@ npm run step_7_stake      # add --json for one JSON object
 the wallet 0xabe9…e2 stakes itself with a SENDER frame calling the registry…
 staked: 0xd1a6…9d82
 wallet 0xabe9…e2: 0.012 ETH, unstake delay 86400s
-next: npm run step_8_tx_violating_alt
+next: yarn step_8_tx_violating_alt
 ```
 
 **If it fails**

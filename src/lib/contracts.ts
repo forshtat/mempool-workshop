@@ -13,7 +13,7 @@ export function loadArtifact(name: ArtifactName): { abi: Abi; bytecode: Hex } {
   try {
     return JSON.parse(fs.readFileSync(file, "utf8"));
   } catch {
-    throw new StepError("ARTIFACT_MISSING", `contracts/artifacts/${name}.json not found`, { hint: "run `npm run build:contracts` (needs foundry)" });
+    throw new StepError("ARTIFACT_MISSING", `contracts/artifacts/${name}.json not found`, { hint: "run `yarn build:contracts` (needs foundry)" });
   }
 }
 

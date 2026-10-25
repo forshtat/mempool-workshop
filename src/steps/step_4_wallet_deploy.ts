@@ -19,7 +19,7 @@ runStep("step_4_wallet_deploy", async (ctx) => {
   const wallet = await deployContract("ExampleWallet", [owner], cfg.walletFundingWei);
   writeState({ wallet });
   return {
-    summary: [`ExampleWallet deployed: ${wallet}`, `owner: ${owner}`, `balance: ${Number(await getBalance(wallet)) / 1e18} ETH`, `next: npm run step_5_tx_wallet`].join("\n"),
+    summary: [`ExampleWallet deployed: ${wallet}`, `owner: ${owner}`, `balance: ${Number(await getBalance(wallet)) / 1e18} ETH`, `next: yarn step_5_tx_wallet`].join("\n"),
     data: { wallet, owner, reused: false },
   };
 });
