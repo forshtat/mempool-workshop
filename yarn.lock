@@ -555,9 +555,9 @@ fsevents@~2.3.2, fsevents@~2.3.3:
   resolved "https://registry.yarnpkg.com/fsevents/-/fsevents-2.3.3.tgz#cac6407785d03675a2a5e1a5305c697b347d90d6"
   integrity sha512-5xoDfX+fL7faATnagmWPpbFtwh/R77WmMMqqHGS65C3vvB0YHrgF+B1YmZ3441tMj5n63k0212XNoJwzlhffQw==
 
-"hegota-frames@github:forshtat/hegota-frames-yul-library#1047d60e8828ddc29e06a19aab58ef4b788af219":
+"hegota-frames@github:forshtat/hegota-frames-yul-library#4e37a7a1c98f5d4861f177086d1f726f314a00a4":
   version "0.0.0"
-  resolved "https://codeload.github.com/forshtat/hegota-frames-yul-library/tar.gz/1047d60e8828ddc29e06a19aab58ef4b788af219"
+  resolved "https://codeload.github.com/forshtat/hegota-frames-yul-library/tar.gz/4e37a7a1c98f5d4861f177086d1f726f314a00a4"
 
 isows@1.0.7:
   version "1.0.7"

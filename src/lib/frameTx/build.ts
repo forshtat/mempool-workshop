@@ -1,5 +1,6 @@
 import { encodeFunctionData } from "viem";
 import type { Address, Hex } from "viem";
+import { toWire as libToWire } from "hegota-frames/rpc";
 import * as lib from "hegota-frames/tx";
 import { computeSigHash, encodeRawFrameTx } from "./codec.js";
 import { profile } from "./profile.js";
@@ -39,30 +40,8 @@ export function buildSelfRelayTx(a: {
 /** Signs over the signature hash and packs the result as `v(0/1) || r || s`. */
 export const signFrameTx = (tx: FrameTransaction, privateKey: Hex): Promise<FrameTransaction> => lib.signTx(profile, tx, privateKey);
 
-const hex = (n: bigint) => `0x${n.toString(16)}`;
-
 /** The JSON shape `eth_sendFrameTransaction` expects. */
-export function toWire(tx: FrameTransaction): unknown {
-  return {
-    chainId: hex(tx.chainId),
-    nonceKeys: tx.nonceKeys.map(hex),
-    nonceSeq: hex(tx.nonceSeq),
-    sender: tx.sender,
-    frames: tx.frames.map((f) => ({
-      mode: f.mode, flags: f.flags, target: f.target,
-      limits: { execution: hex(f.limits.execution), state: hex(f.limits.state) },
-      value: hex(f.value), data: f.data,
-    })),
-    signatures: tx.signatures.map((s) => ({ scheme: s.scheme, signer: s.signer, msg: s.msg, signature: s.signature })),
-    fees: {
-      maxPriorityFeePerGas: hex(tx.fees.maxPriorityFeePerGas),
-      maxFeePerGas: hex(tx.fees.maxFeePerGas),
-      maxFeePerBlobGas: hex(tx.fees.maxFeePerBlobGas),
-    },
-    blobVersionedHashes: tx.blobVersionedHashes,
-    recentRootReferences: tx.recentRootReferences.map((r) => ({ sourceId: r.sourceId, slot: hex(r.slot), root: r.root })),
-  };
-}
+export const toWire = libToWire;
 
 export const txHash = (tx: FrameTransaction): Hex => lib.txHash(profile, tx);
 
