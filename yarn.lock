@@ -137,6 +137,11 @@
   resolved "https://registry.yarnpkg.com/@esbuild/win32-x64/-/win32-x64-0.28.2.tgz#b21affb804cc167c133d95f45b3a1dc1323b9a87"
   integrity sha512-5ebpxr3nWMzrL/rnUI755Jkuee0bHL/Gq0WTF9lvcpv73wAp5eu8MfBUgWK9bhWvZjj7yX8etf/8tI8Ney695g==
 
+"@forshtat/hegota-support@0.0.1":
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/@forshtat/hegota-support/-/hegota-support-0.0.1.tgz#392897b87c8abd01268ce08957377fb407e44373"
+  integrity sha512-F6ZvduwrMBjzjoYE85DH7JHRaDyx2V2+kgSsi2eUDLiAJR1uiqp6mRzkYOLA+Y3pjxDpw60Z07mTer/4bebcZQ==
+
 "@jridgewell/resolve-uri@^3.1.0":
   version "3.1.2"
   resolved "https://registry.yarnpkg.com/@jridgewell/resolve-uri/-/resolve-uri-3.1.2.tgz#7a0ee601f60f99a20c7c7c5ff0c80388c1189bd6"
@@ -554,10 +559,6 @@ fsevents@~2.3.2, fsevents@~2.3.3:
   version "2.3.3"
   resolved "https://registry.yarnpkg.com/fsevents/-/fsevents-2.3.3.tgz#cac6407785d03675a2a5e1a5305c697b347d90d6"
   integrity sha512-5xoDfX+fL7faATnagmWPpbFtwh/R77WmMMqqHGS65C3vvB0YHrgF+B1YmZ3441tMj5n63k0212XNoJwzlhffQw==
-
-"hegota-frames@github:forshtat/hegota-frames-yul-library#7f5ddf32da4ce799ca6c10ef7bc3d36a26f47778":
-  version "0.0.0"
-  resolved "https://codeload.github.com/forshtat/hegota-frames-yul-library/tar.gz/7f5ddf32da4ce799ca6c10ef7bc3d36a26f47778"
 
 isows@1.0.7:
   version "1.0.7"

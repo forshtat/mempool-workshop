@@ -1,7 +1,7 @@
-import { RpcError, rpc as libRpc } from "hegota-frames/rpc";
+import { RpcError, rpc as libRpc } from "@forshtat/hegota-support/rpc";
 import { StepError } from "./output.js";
 
-/** hegota-frames' `rpc`, with failures turned into `StepError`s that carry this workshop's hints. */
+/** @forshtat/hegota-support' `rpc`, with failures turned into `StepError`s that carry this workshop's hints. */
 export async function rpc(url: string, method: string, params: unknown[] = []): Promise<any> {
   try {
     return await libRpc(url, method, params);

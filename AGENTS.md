@@ -59,7 +59,7 @@ Flags: `--json`, `--fresh` (redeploy contracts the step owns). Config is `worksh
 
 - Never call `debug_bundler_clear*` or any other `debug_*` method that changes the node, except through `step_9_reputation_burn` and `reset_reputation` on the participant's own wallet. They affect everyone on the devnet.
 - There is no shared funded key in this repo: funding goes through the node's faucet (`skandha_explorer_faucet`). Never ask for, search for or use the devnet's genesis key.
-- Do not vendor or import from `skandha/packages/*/lib`: the built output can be stale. The codec comes from the `hegota-frames` package (`src/lib/frameTx` only binds it to this devnet's profile and keeps the workshop's gas numbers); the sidecar JSON shape (`toWire`) comes from `hegota-frames/rpc`.
+- Do not vendor or import from `skandha/packages/*/lib`: the built output can be stale. The codec comes from the `@forshtat/hegota-support` package (`src/lib/frameTx` only binds it to this devnet's profile and keeps the workshop's gas numbers); the sidecar JSON shape (`toWire`) comes from `@forshtat/hegota-support/rpc`.
 - When a tx is rejected, do not guess: run `yarn step_11_debug <txHash>` for the rule-by-rule admission report.
 
 ## Facts that explain failures

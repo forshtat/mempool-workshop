@@ -1,6 +1,6 @@
-// hegota-frames does the encoding; these bind it to this devnet's profile.
+// @forshtat/hegota-support does the encoding; these bind it to this devnet's profile.
 import type { Hex } from "viem";
-import * as lib from "hegota-frames/tx";
+import * as lib from "@forshtat/hegota-support/tx";
 import { profile } from "./profile.js";
 
 export const computeSigHash = (tx: lib.FrameTx): Hex => lib.sigHash(profile, tx);

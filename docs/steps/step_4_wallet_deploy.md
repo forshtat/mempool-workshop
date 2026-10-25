@@ -8,7 +8,7 @@ yarn step_4_wallet_deploy      # add --json for one JSON object, --fresh to rede
 
 **Needs:** step 1
 
-**What it does:** Deploys `ExampleWallet(owner)` with 0.01 ETH of creation value. The wallet has no ECDSA code: the tx carries a signature entry with `signer = owner` that the protocol verifies, and the wallet's `VERIFY` frame checks the verified signer with `sigparam` and approves with `approve`, both from `HegotaSupport` (hegota-frames), whose constructor creates the small Yul helpers that run the opcodes. Re-running reuses the wallet; `--fresh` deploys a new one.
+**What it does:** Deploys `ExampleWallet(owner)` with 0.01 ETH of creation value. The wallet has no ECDSA code: the tx carries a signature entry with `signer = owner` that the protocol verifies, and the wallet's `VERIFY` frame checks the verified signer with `sigparam` and approves with `approve`, both from `HegotaSupport` (@forshtat/hegota-support), whose constructor creates the small Yul helpers that run the opcodes. Re-running reuses the wallet; `--fresh` deploys a new one.
 
 **Expected output** (addresses and hashes differ):
 

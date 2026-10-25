@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {HegotaSupport} from "hegota-frames/contracts/HegotaSupport.sol";
-import {Devnet} from "hegota-frames/contracts/Devnet.sol";
-import {Scope, SigParam} from "hegota-frames/contracts/Params.sol";
+import {HegotaSupport} from "@forshtat/hegota-support/contracts/HegotaSupport.sol";
+import {Devnet} from "@forshtat/hegota-support/contracts/Devnet.sol";
+import {Scope, SigParam} from "@forshtat/hegota-support/contracts/Params.sol";
 
 /// A wallet that breaks a mempool rule on demand, to show the difference between mempools.
 ///

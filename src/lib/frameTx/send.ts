@@ -1,4 +1,4 @@
-import * as lib from "hegota-frames/rpc";
+import * as lib from "@forshtat/hegota-support/rpc";
 import type { Address, Hex } from "viem";
 import { waitMined } from "../chain.js";
 import { loadConfig } from "../config.js";

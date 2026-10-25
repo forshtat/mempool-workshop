@@ -1,7 +1,7 @@
 import { encodeFunctionData } from "viem";
 import type { Address, Hex } from "viem";
-import { toWire as libToWire } from "hegota-frames/rpc";
-import * as lib from "hegota-frames/tx";
+import { toWire as libToWire } from "@forshtat/hegota-support/rpc";
+import * as lib from "@forshtat/hegota-support/tx";
 import { computeSigHash, encodeRawFrameTx } from "./codec.js";
 import { profile } from "./profile.js";
 import type { Frame, FrameTransaction } from "./types.js";
