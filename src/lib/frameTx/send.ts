@@ -1,3 +1,4 @@
+import * as lib from "hegota-frames/rpc";
 import type { Address, Hex } from "viem";
 import { waitMined } from "../chain.js";
 import { loadConfig } from "../config.js";
@@ -51,13 +52,14 @@ export interface Rejection {
   hint: string;
 }
 
+const REJECTION_HINTS: Record<lib.Rejection["rule"], string> = {
+  "OP-011": "validation code may not use environment opcodes (TIMESTAMP, NUMBER, BALANCE…); remove the opcode",
+  STO: "validation may only touch the sender's own or associated storage; a staked entity may read more in the standard alt-mempool (yarn step_7_stake)",
+  UNKNOWN: "run `yarn step_11_debug <txHash>` if the tx was accepted, or check the node's error text",
+};
+
 /** Maps a node's rejection text (ethrex or the sidecar) to a rule family from the mempool rules and a next step. */
 export function explainRejection(message: string): Rejection {
-  if (/banned opcode|BannedOpcode/i.test(message)) {
-    return { rule: "OP-011", message, hint: "validation code may not use environment opcodes (TIMESTAMP, NUMBER, BALANCE…); remove the opcode" };
-  }
-  if (/StorageReadNonSender|accessed 0x[0-9a-f]+ slot/i.test(message)) {
-    return { rule: "STO", message, hint: "validation may only touch the sender's own or associated storage; a staked entity may read more in the standard alt-mempool (yarn step_7_stake)" };
-  }
-  return { rule: "UNKNOWN", message, hint: "run `yarn step_11_debug <txHash>` if the tx was accepted, or check the node's error text" };
+  const { rule } = lib.explainRejection(message);
+  return { rule, message, hint: REJECTION_HINTS[rule] };
 }

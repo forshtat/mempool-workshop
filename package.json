@@ -33,7 +33,7 @@
     "vitest": "^5.0.5"
   },
   "dependencies": {
-    "hegota-frames": "github:forshtat/hegota-frames-yul-library#4e37a7a1c98f5d4861f177086d1f726f314a00a4",
+    "hegota-frames": "github:forshtat/hegota-frames-yul-library#7f5ddf32da4ce799ca6c10ef7bc3d36a26f47778",
     "json5": "^2.2.3",
     "viem": "^2.57.7"
   }
