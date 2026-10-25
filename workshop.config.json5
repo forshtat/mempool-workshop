@@ -9,7 +9,7 @@
   // methods, and the standard eth_* reads. The gateway validates, then gossips to the miner.
   gatewayUrl: "https://altmempoolgateway.forshtat.com/rpc",
   // The web explorer, only used to print links.
-  explorerUrl: "https://altmempoolexplorer.forshtat.com/",
+  explorerUrl: "https://explorer.altmempool.wtf/",
   // NaiveStakingRegistry: every stake is keyed on msg.sender.
   stakingRegistry: "0xd51c04d7a0b01124e84de152f4e56d9eecb22d2f",
   // Sentinel entry point that the sidecar uses as the mempool's entry-point address.

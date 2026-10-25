@@ -44,7 +44,7 @@ yarn step_1_check
 
 `step_1_check` creates a throwaway key in `.workshop-state.json` (devnet only; never reuse it on a real network) and funds it from the devnet's faucet (1 ETH; also available as the **Faucet** button in the explorer). Devnet: chain `1337`,
 every request goes to the gateway, `https://altmempoolgateway.forshtat.com/rpc` (a sidecar node that gossips to the miner and forwards chain reads to ethrex),
-explorer at <https://altmempoolexplorer.forshtat.com/>. All configuration is in `workshop.config.json5` (read-only for the code; every key is required). There are no environment variables.
+explorer at <https://explorer.altmempool.wtf/>. All configuration is in `workshop.config.json5` (read-only for the code; every key is required). There are no environment variables.
 
 The mempool node is the sidecar, a fork that speaks EIP-8141. Its source, the full RPC reference (`deploy/devnet/devnet-readme.md`), the P2P guide and the devnet explorer API docs live in the sidecar repo: <https://github.com/forshtat/mempool-workshop-sidecar>.
 
