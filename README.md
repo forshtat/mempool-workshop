@@ -32,6 +32,21 @@ the sender is staked, and debug a rejection.
 
 Not sure which mempool your contract needs? Read the [decision guide](docs/decision-guide.md).
 
+
+## Devnet versions
+
+What the devnet runs, pinned to commits. The EIP revisions are the ones the execution client's own notes name as its spec targets (`docs/eip-*.md` in the ethrex commit below); the code has not been checked against them here.
+
+| Component | Pinned to |
+|---|---|
+| ethrex (execution client) | [`9aa3645d`](https://github.com/forshtat/ethrex/commit/9aa3645d795945c64400f41a70aace0edfa7f383), branch `eip8141-tracer` (2026-10-01). Check the live build: `curl -s -X POST <ethrex root URL> -H 'content-type: application/json' -d '{"jsonrpc":"2.0","id":1,"method":"web3_clientVersion","params":[]}'` |
+| [EIP-8141](https://eips.ethereum.org/EIPS/eip-8141) frame transactions | [`4a9ad32c`](https://github.com/ethereum/EIPs/blob/4a9ad32cf2c851d16ab889d643342074ea3fab95/EIPS/eip-8141.md) (2026-07-30) |
+| [EIP-8250](https://eips.ethereum.org/EIPS/eip-8250) keyed nonces | [`81b976ac`](https://github.com/ethereum/EIPs/blob/81b976ac01591fed2eecb73fa574f27cd18db2e8/EIPS/eip-8250.md) (2026-08-03), `NONCE_MANAGER` at `0x…8250` |
+| [EIP-8272](https://eips.ethereum.org/EIPS/eip-8272) recent roots | [`d8636a33`](https://github.com/ethereum/EIPs/blob/d8636a330deb59a8a8f88d39dcbccb2c7d77db28/EIPS/eip-8272.md) (2026-08-03), `RECENT_ROOT_ADDRESS` at `0x…8272`, predeploy code from [EIPs PR #12131](https://github.com/ethereum/EIPs/pull/12131) |
+| Standard alt-mempool rules | [`74a868cd`](https://github.com/forshtat/ERCs/commit/74a868cd4fb173c00015235fec69d6d748d781cd) of forshtat/ERCs PR #6 (see the notice above) |
+
+The `eip8141-tracer-latest` image tag follows the branch, so the ethrex row is only true until the next deploy. Later drafts of these EIPs may differ from the pinned revisions.
+
 ## Quick start
 
 Needs Node 20.12 or newer and yarn (v1). Foundry is optional (only to change the contracts).
