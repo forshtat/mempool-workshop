@@ -109,6 +109,26 @@ export const EXPLANATIONS: Record<string, Explanation> = {
       "Compare the error message with the reputation line: the message is generic, the status is not. A THROTTLED entity would still be admitted, only capped at 4 mempool entries.",
     why: "A rejection message can hide its real cause. When a transaction is refused, check the node's view of your entity, not just the text.",
   },
+  step_12_tx_keyed_nonces: {
+    title: "Step 12 (bonus): two transactions from one wallet, side by side",
+    story:
+      "Normally a sender has one nonce, so its transactions queue up in order. EIP-8250 lets a transaction name a nonce key instead. Each key has its own counter, so transactions on different keys do not wait for each other. This step sends two transactions from your wallet back to back, one on key 1 and one on key 2, both with sequence number 0.",
+    components:
+      "The NONCE_MANAGER predeploy at 0x...8250 stores each (sender, key) counter. The nonce_keys field in the transaction envelope selects the key, and the usual wallet VERIFY frame approves. The node's mempool only lets a sender have several transactions pending when its validation reads none of its own storage, which ExampleWallet does not.",
+    watch:
+      "Both transactions pending at the same time, and often mined in the same block. The NONCE_MANAGER counters move from 0 to 1, while the wallet's ordinary account nonce does not move at all.",
+    why: "Parallel transactions from one smart account, with no ordering between them. The ordinary nonce domain (key 0) stays separate, which is why a pending keyed transaction and a pending ordinary one from the same sender are never mixed.",
+  },
+  step_13_tx_recent_roots: {
+    title: "Step 13 (bonus): declaring a recent root",
+    story:
+      "EIP-8272 lets a transaction cite a recent commitment (a root) in its signed envelope, so validation code could rely on it without reading someone else's mutable storage. This step only demonstrates the mechanism. It commits a root, waits one slot, sends a transaction that declares it, and then sends one that declares a root nobody committed.",
+    components:
+      "The RECENT_ROOT_ADDRESS predeploy at 0x...8272: calling it with salt and root (64 bytes) stores an entry for the current slot under a source id built from your address and the salt. The recent_root_references field in the envelope carries (source id, slot, root). The block header's slotNumber says which slot you are in.",
+    watch:
+      "'predeploy entry matches the expected hash: yes' (we recomputed the stored value), the first transaction mined, and the second rejected before any frame runs because its root is not committed.",
+    why: "It shows a root being a fact the chain itself verifies: the reference has to exist and be between 1 and 8191 slots old. Nothing in this wallet reads the root, so no validation logic depends on it here. The predeploy's code is still a draft (ethereum/EIPs PR #12131).",
+  },
   step_11_debug: {
     title: "Step 11: why was my transaction (not) accepted?",
     story:

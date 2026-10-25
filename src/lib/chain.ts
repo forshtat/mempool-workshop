@@ -79,3 +79,12 @@ export async function fundFromFaucet(to: Address): Promise<Hex> {
   if (receipt.status !== "0x1") throw new StepError("FUNDING_FAILED", `Funding transfer ${result.txHash} reverted`);
   return result.txHash;
 }
+
+export async function getStorageAt(address: Address, slot: Hex): Promise<Hex> {
+  return await rpc(loadConfig().gatewayUrl, "eth_getStorageAt", [address, slot, "latest"]);
+}
+
+/** A block header and its transaction hashes. `slotNumber` is the beacon slot (EIP-7843) that EIP-8272 measures age in. */
+export async function getBlock(number: "latest" | Hex): Promise<{ number: Hex; slotNumber: Hex; [k: string]: unknown }> {
+  return await rpc(loadConfig().gatewayUrl, "eth_getBlockByNumber", [number, false]);
+}

@@ -25,6 +25,8 @@ export const PREREQUISITES: Record<string, string[]> = {
   step_8_tx_violating_alt: ["step_7_stake"],
   step_9_reputation_burn: ["step_6_tx_violating_canonical"],
   step_10_tx_violating_alt_banned: ["step_9_reputation_burn"],
+  step_12_tx_keyed_nonces: ["step_4_wallet_deploy"],
+  step_13_tx_recent_roots: ["step_4_wallet_deploy"],
   reset_reputation: ["step_6_tx_violating_canonical"],
 };
 

@@ -5,6 +5,7 @@ import * as lib from "@forshtat/hegota-support/tx";
 import { computeSigHash, encodeRawFrameTx } from "./codec.js";
 import { profile } from "./profile.js";
 import type { Frame, FrameTransaction } from "./types.js";
+import type { RecentRootReference } from "@forshtat/hegota-support/tx";
 
 /** A frame of the named mode. `scope` is an approve scope of the devnet (`"EXECUTION_AND_PAYMENT"`), `null` target = the sender. */
 const frame = (mode: "VERIFY" | "SENDER", scope: string | undefined, target: Address | null, execution: bigint, opts: { value?: bigint; data?: Hex; state?: bigint } = {}): Frame =>
@@ -12,15 +13,23 @@ const frame = (mode: "VERIFY" | "SENDER", scope: string | undefined, target: Add
 
 const SECP256K1_PLACEHOLDER = (signer: Hex = "0x") => lib.secp256k1Placeholder(profile, signer);
 
-function assembleTx(f: { sender: Address; nonceSeq: bigint; chainId: number; maxFeePerGas: bigint; frames: Frame[]; signer?: Hex }): FrameTransaction {
-  return lib.newTx({
+function assembleTx(f: {
+  sender: Address; nonceSeq: bigint; chainId: number; maxFeePerGas: bigint; frames: Frame[]; signer?: Hex;
+  /** EIP-8250 keys; the default `[0n]` is the sender's ordinary account nonce. */
+  nonceKeys?: bigint[];
+  /** EIP-8272 references to recent roots, declared in the signed envelope. */
+  recentRootReferences?: RecentRootReference[];
+}): FrameTransaction {
+  const tx = lib.newTx({
     chainId: f.chainId,
     sender: f.sender,
     nonceSeq: f.nonceSeq,
+    nonceKeys: f.nonceKeys,
     frames: f.frames,
     signatures: [SECP256K1_PLACEHOLDER(f.signer)],
     fees: { maxFeePerGas: f.maxFeePerGas },
   });
+  return f.recentRootReferences ? { ...tx, recentRootReferences: f.recentRootReferences } : tx;
 }
 
 /** `[self_verify]` + one SENDER transfer; the EOA signs and pays for itself. */
@@ -64,10 +73,14 @@ export function buildWalletTx(a: {
   wallet: Address; owner: Address; to: Address; value: bigint; nonce: bigint; chainId: number; maxFeePerGas: bigint;
   /** Calldata of the VERIFY frame. ViolatingWallet breaks a storage rule when this is non-empty. */
   verifyData?: Hex;
+  /** Keyed nonces (EIP-8250): `nonce` is then the next sequence number of that key, not the account nonce. */
+  nonceKeys?: bigint[];
+  /** Recent roots (EIP-8272) to declare in the envelope. */
+  recentRootReferences?: RecentRootReference[];
 }): FrameTransaction {
   return assembleTx({
     sender: a.wallet, nonceSeq: a.nonce, chainId: a.chainId, maxFeePerGas: a.maxFeePerGas,
-    signer: a.owner,
+    signer: a.owner, nonceKeys: a.nonceKeys, recentRootReferences: a.recentRootReferences,
     frames: [
       frame("VERIFY", "EXECUTION_AND_PAYMENT", null, 70_000n, { data: a.verifyData }),
       frame("SENDER", undefined, a.to, 50_000n, { value: a.value, state: 200_000n }),

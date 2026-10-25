@@ -16,6 +16,8 @@
     "step_9_reputation_burn": "tsx src/steps/step_9_reputation_burn.ts",
     "step_10_tx_violating_alt_banned": "tsx src/steps/step_10_tx_violating_alt_banned.ts",
     "step_11_debug": "tsx src/steps/step_11_debug.ts",
+    "step_12_tx_keyed_nonces": "tsx src/steps/step_12_tx_keyed_nonces.ts",
+    "step_13_tx_recent_roots": "tsx src/steps/step_13_tx_recent_roots.ts",
     "reset_reputation": "tsx src/commands/reset_reputation.ts",
     "build:contracts": "forge build --root contracts && node scripts/export-artifacts.mjs",
     "test": "vitest run",

@@ -1,6 +1,6 @@
 # Alt-mempool workshop: EIP-8141 frame transactions and the standard alt-mempool
 
-A hands-on quick start. In eleven one-line commands you send frame transactions to a public devnet,
+A hands-on quick start. In eleven one-line commands (plus two bonus steps) you send frame transactions to a public devnet,
 watch the **canonical mempool** reject a transaction that the **standard alt-mempool** accepts once
 the sender is staked, and debug a rejection.
 
@@ -81,6 +81,8 @@ outcome happened (for the "fail" steps, that means the rejection). Details and e
 | `yarn step_9_reputation_burn` | Get the entity banned (**a declared shortcut**, see above) |
 | `yarn step_10_tx_violating_alt_banned` | **Fail** to send the tx because of low reputation |
 | `yarn step_11_debug <txHash>` | Debug any tx: admission report, lifecycle, status |
+| `yarn step_12_tx_keyed_nonces` | **Bonus** (needs step 4): two txs from one wallet on different nonce keys (EIP-8250), pending side by side |
+| `yarn step_13_tx_recent_roots` | **Bonus** (needs step 4): commit a recent root, declare it in a tx, and see an uncommitted one refused (EIP-8272) |
 
 Run them in order the first time. State (deployed addresses, last tx hash) lives in `.workshop-state.json`. If the devnet was reset, the recorded
 addresses are gone: re-run the deploy steps with `--fresh`.

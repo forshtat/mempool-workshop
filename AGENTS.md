@@ -32,6 +32,8 @@ for the "fail" steps (6, 10) that is the rejection.
 | `step_9_reputation_burn` | step 6 | explorer shows `BANNED` (**declared shortcut**; `yarn reset_reputation` undoes it) |
 | `step_10_tx_violating_alt_banned` | step 9 | rejected, explorer shows `BANNED` (exit 0) |
 | `step_11_debug -- <txHash>` | none (defaults to the last tx) | admission report, lifecycle, status |
+| `step_12_tx_keyed_nonces` | step 4 | two keyed-nonce txs (keys 1 and 2) mined, the wallet's account nonce unchanged |
+| `step_13_tx_recent_roots` | step 4 | a committed root declared in a mined tx; a never-committed root refused (exit 0) |
 
 Flags: `--json`, `--fresh` (redeploy contracts the step owns). Config is `workshop.config.json5` and nothing else: every key is required, unknown keys are an error, the code never writes it, and there are no environment variables. What the steps generate (participant key, deployed addresses, last tx hash) is state, in `.workshop-state.json`. Per-step runbooks: `docs/steps/`.
 
