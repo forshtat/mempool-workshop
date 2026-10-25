@@ -51,7 +51,7 @@ The mempool node is the sidecar, a fork that speaks EIP-8141. Its source, the fu
 ## The steps
 
 Every step is one command. Each prints a short summary, accepts `--json` for one machine-readable object, and exits 0 when the **expected**
-outcome happened (for the "fail" steps, that means the rejection). Details and expected output are in [`docs/steps/`](docs/steps/).
+outcome happened (for the "fail" steps, that means the rejection). Details and expected output are in [`docs/steps/`](docs/steps/). Each step also prints a short plain-language explanation before it runs: what is going on, which components are involved, what to watch for and why it matters (not in `--json` mode).
 
 | Command | You achieve |
 |---|---|

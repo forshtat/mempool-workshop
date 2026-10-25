@@ -1,4 +1,5 @@
 import { StepError } from "./stepError.js";
+import { renderExplanation } from "./explain.js";
 import { gated } from "./progress.js";
 
 export { StepError };
@@ -64,7 +65,9 @@ export async function runStep(name: string, fn: (ctx: StepContext) => Promise<Re
   const json = argv.includes("--json");
   // Stream progress to stderr live instead of buffering until the end.
   const live = (l: string) => process.stderr.write(l + "\n");
-  const r = await executeStep(name, gated(name, (ctx) => fn({ ...ctx, log: live })), argv);
+  const explanation = json ? undefined : renderExplanation(name);
+  // Printed after the order check, so a refused step does not explain itself first.
+  const r = await executeStep(name, gated(name, (ctx) => { if (explanation) live(explanation); return fn({ ...ctx, log: live }); }), argv);
   process.stdout.write(r.stdout + "\n");
   process.exit(r.exitCode);
 }
