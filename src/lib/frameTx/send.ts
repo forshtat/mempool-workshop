@@ -51,7 +51,7 @@ export interface Rejection {
   hint: string;
 }
 
-/** Maps a node's rejection text (ethrex or Skandha) to a rule family from the mempool rules and a next step. */
+/** Maps a node's rejection text (ethrex or the sidecar) to a rule family from the mempool rules and a next step. */
 export function explainRejection(message: string): Rejection {
   if (/banned opcode|BannedOpcode/i.test(message)) {
     return { rule: "OP-011", message, hint: "validation code may not use environment opcodes (TIMESTAMP, NUMBER, BALANCE…); remove the opcode" };

@@ -7,10 +7,10 @@ in the repo. Probe contracts and a funded probe account (`0xd2F6…954e`) were l
 
 The canonical mempool path on the devnet is **ethrex's root endpoint**, with the tx sent as a
 type-`0x06` raw transaction through `eth_sendRawTransaction`. It applies EIP-8141's own validation.
-Skandha's `/rpc` `eth_sendFrameTransaction` applies the ERC-7562-style rules (the standard
+the sidecar's `/rpc` `eth_sendFrameTransaction` applies the ERC-7562-style rules (the standard
 alt-mempool). Same tx, both endpoints:
 
-| Violation | ethrex `eth_sendRawTransaction` (canonical) | Skandha `eth_sendFrameTransaction` (standard alt-mempool) |
+| Violation | ethrex `eth_sendRawTransaction` (canonical) | The sidecar `eth_sendFrameTransaction` (standard alt-mempool) |
 |---|---|---|
 | Wallet reads another contract's storage | `-32000` `…simulation failed: StorageReadNonSender` | `-32502` `unstaked payer accessed 0x… slot 0x0` |
 | Wallet uses `TIMESTAMP` | `-32000` `…simulation failed: BannedOpcode(66)` | `-32502` `payer uses banned opcode: TIMESTAMP` |
@@ -24,7 +24,7 @@ Notes
   `tx.nonce`). **Vendor the codec from `src`**, never from `lib`.
 
 **Decision:** step 6 submits to ethrex via `eth_sendRawTransaction`; steps 8 and 10 submit to
-Skandha. No local rules check is needed. `step_6` should also show the Skandha rejection for the
+The sidecar. No local rules check is needed. `step_6` should also show the sidecar rejection for the
 same tx, so participants see both messages.
 
 ## Check 2: Solidity viability (steps 3, 4, 5): PASS with a workaround
@@ -57,7 +57,7 @@ Facts
   low fees do not stall a tx and do not burn reputation.
 - A staked wallet can have many txs in flight by using a different `nonceKeys` entry per tx. 12
   txs went in at about 0.15 s each, and `opsSeen` rose by exactly 1 per accepted tx.
-- Skandha bundles every 10 s with `bundleSize` 4 (from `skandha_config`), so a large backlog is
+- The sidecar bundles every 10 s with `bundleSize` 4 (from `skandha_config`), so a large backlog is
   included slowly while `opsSeen` climbs fast.
 - `debug_bundler_setReputation` is reachable from the internet on the devnet (not yet tested).
 
@@ -71,7 +71,7 @@ inclusion. Candidate designs for the author to choose from:
    is 0, which is allowed because it is the wallet's own storage. Admit the flood, flip the slot,
    and the queued txs fail on the second validation and are never included. This is the real
    "mass invalidation" attack the reputation system defends against, and it is deterministic
-   for the invalidated ones. More code, and I have not tested how Skandha reacts.
+   for the invalidated ones. More code, and I have not tested how the sidecar reacts.
 3. **Shortcut** with `debug_bundler_setReputation` on the participant's own entity, labelled
    clearly as a simulation. Fast and deterministic, but not the real mechanism, and it depends
    on a debug method that should not be open.
@@ -88,7 +88,7 @@ inclusion. Candidate designs for the author to choose from:
 - The wallet's validation prefix must itself be admissible when it sends the stake tx, so the
   violating behaviour must be switchable. The probe wallet violates only when the VERIFY frame
   `data` is non-empty.
-- Staked, the same violating tx (foreign-storage read) was **admitted and mined by Skandha**, and
+- Staked, the same violating tx (foreign-storage read) was **admitted and mined by the sidecar**, and
   **still rejected by ethrex's raw path** (`StorageReadNonSender`).
 - A staked *paymaster* (step 3 variant) still needs its own code to call `addStake`.
 
@@ -132,5 +132,5 @@ Those affect every user of the devnet.
 - **One universal `Approver`** (`60003560006000aa`) reads the approve scope from calldata, so wallets (scope 3), senders (2) and paymasters (1) share it.
 - **THROTTLED still admits a tx; only BANNED rejects.** A banned entity's rejection text is the generic "unstaked payer accessed …", so the explorer's reputation status is what tells you the real cause.
 - **A rejected tx returns no hash.** The steps compute `keccak256(0x06 || rlp(tx))` locally so `step_11_debug` can look the rejection up.
-- **Skandha's built `lib/` was stale** relative to `src/` (the codec still used `tx.nonce`); the codec here is vendored from `src`.
+- **The sidecar's built `lib/` was stale** relative to `src/` (the codec still used `tx.nonce`); the codec here is vendored from `src`.
 - The explorer history is in memory only and has no per-address reputation lookup (the client walks pages).

@@ -8,7 +8,7 @@ yarn step_11_debug <txHash>      # add --json for one JSON object
 
 **Needs:** none (a hash)
 
-**What it does:** Collects, for the hash: Skandha's rule-by-rule admission report, the lifecycle events, `skandha_frameTransactionStatus`, and ethrex's receipt. Defaults to the last tx hash in state; steps 6, 8 and 10 print the hash of the tx they sent.
+**What it does:** Collects, for the hash: the sidecar's rule-by-rule admission report, the lifecycle events, `skandha_frameTransactionStatus`, and ethrex's receipt. Defaults to the last tx hash in state; steps 6, 8 and 10 print the hash of the tx they sent.
 
 **Expected output** (addresses and hashes differ):
 
@@ -27,4 +27,4 @@ An accepted tx adds `lifecycle: … -> admitted -> statusChanged -> included`, `
 |---|---|---|
 | `TX_UNKNOWN` | the explorer history is in memory and cleared on restart; ethrex knows only mined txs | check the hash; re-send the tx |
 | `BAD_ARGUMENT` | no hash given and none in state | pass `-- 0x<txHash>` |
-| a rejection that only ethrex produced (step 6 with a staked wallet) | Skandha never saw it | no admission record exists |
+| a rejection that only ethrex produced (step 6 with a staked wallet) | The sidecar never saw it | no admission record exists |

@@ -16,7 +16,7 @@ runStep("step_8_tx_violating_alt", async (ctx) => {
     buildWalletTx({ wallet, owner, to: cfg.recipient, value: cfg.transferWei, nonce: await accountNonce(wallet), chainId: cfg.chainId, maxFeePerGas: cfg.maxFeePerGasWei, verifyData: "0x01" }),
     ownerKey
   );
-  ctx.log("sending the step 6 tx to the standard alt-mempool (Skandha)…");
+  ctx.log("sending the step 6 tx to the standard alt-mempool (sidecar)…");
   let hash;
   try {
     hash = await sendFrameTx(tx);

@@ -3,7 +3,7 @@
 Two mempools, two sets of rules (terms: see the [README](../README.md)).
 
 - **Canonical mempool**: the public mempool defined by EIP-8141. Every node that implements EIP-8141 runs it. Strictest rules; no staking, no reputation.
-- **Standard alt-mempool**: ERC-8421-style rules, implemented by Skandha. More permissive for **staked** entities in good standing, at the price of staking and reputation risk.
+- **Standard alt-mempool**: ERC-8421-style rules, implemented by the sidecar. More permissive for **staked** entities in good standing, at the price of staking and reputation risk.
   (This repo shows the PR #6 version of those rules; see the notice in the README.)
 
 ## The questions
@@ -16,7 +16,7 @@ Answer in order. The first "yes" in 1 to 3 means the canonical mempool will reje
    *Verified by steps 6 to 8.*
 2. **Does validation use `BALANCE`/`SELFBALANCE`, or another gated opcode?**
    `BALANCE` is rejected for an unstaked payer (`payer uses banned opcode: BALANCE`; this is why the example paymaster does not check its own balance).
-   The Skandha devnet docs say staking above `minStake` unlocks `BALANCE`/`SELFBALANCE`. *Not exercised by the steps.*
+   The sidecar devnet docs say staking above `minStake` unlocks `BALANCE`/`SELFBALANCE`. *Not exercised by the steps.*
    Environment opcodes such as `TIMESTAMP`, `NUMBER`, `COINBASE`, `ORIGIN` and `GASPRICE` are rejected by **both** mempools, staked or not.
 3. **Does validation need more gas than the canonical cap (`MAX_VERIFY_GAS`, 100,000 across the validation prefix)?**
    The standard alt-mempool has a separate, per-entity budget for staked entities. *Not exercised by the steps.*
@@ -26,7 +26,7 @@ Answer in order. The first "yes" in 1 to 3 means the canonical mempool will reje
    If you cannot accept that, stay inside the canonical rules.
 5. **Who will include your tx?**
    A tx admitted only by the standard alt-mempool reaches only nodes and block builders that run it. A canonical-mempool tx reaches every EIP-8141 node.
-   On the devnet the block builder runs Skandha, so both work. On a real network, check who runs what.
+   On the devnet the block builder runs the sidecar, so both work. On a real network, check who runs what.
 
 ## Rule of thumb
 

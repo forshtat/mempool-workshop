@@ -14,12 +14,12 @@ yarn step_6_tx_violating_canonical      # add --json for one JSON object, --fres
 
 ```
 canonical mempool (ethrex, via the gateway): rejected [STO] Invalid params: Frame transaction validation-prefix simulation failed: StorageReadNonSender
-standard alt-mempool (Skandha): rejected [STO] unstaked payer accessed 0x902d…bd11 slot 0x00…00
+standard alt-mempool (sidecar): rejected [STO] unstaked payer accessed 0x902d…bd11 slot 0x00…00
 why: validation may only touch the sender's own or associated storage; a staked entity may read more in the standard alt-mempool (yarn step_7_stake)
 tx hash: 0x8466…9127 (debug with: yarn step_11_debug 0x8466…9127)
 next: yarn step_7_stake
 ```
-Once the wallet is staked, the Skandha line says `skipped`, because Skandha would admit (and mine) the tx.
+Once the wallet is staked, the sidecar line says `skipped`, because the sidecar would admit (and mine) the tx.
 
 **If it fails**
 

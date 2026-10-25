@@ -4,7 +4,7 @@
 {
   // --- The devnet ---
   chainId: 1337,
-  // The gateway Skandha node (/rpc). Everything goes through it: frame transactions into the
+  // The gateway sidecar node (/rpc). Everything goes through it: frame transactions into the
   // standard alt-mempool, raw transactions on to the canonical mempool, the faucet, the explorer
   // methods, and the standard eth_* reads. The gateway validates, then gossips to the miner.
   gatewayUrl: "https://altmempoolgateway.forshtat.com/rpc",
@@ -12,7 +12,7 @@
   explorerUrl: "https://altmempoolexplorer.forshtat.com/",
   // NaiveStakingRegistry: every stake is keyed on msg.sender.
   stakingRegistry: "0xd51c04d7a0b01124e84de152f4e56d9eecb22d2f",
-  // Sentinel entry point that Skandha uses as the mempool's entry-point address.
+  // Sentinel entry point that the sidecar uses as the mempool's entry-point address.
   entryPoint: "0x00000000000000000000000000000000000000aa",
 
   // --- Files (relative to this file) ---

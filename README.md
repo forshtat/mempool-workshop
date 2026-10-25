@@ -7,7 +7,7 @@ the sender is staked, and debug a rejection.
 > [!WARNING]
 > **Work in progress.** Everything here is under active development, and the devnet can be reset at any time.
 >
-> Skandha ([source: mempool-workshop-sidecar](https://github.com/forshtat/mempool-workshop-sidecar)) is the standard alt-mempool node this repo talks to. Its rules come from
+> The ERC-8421 Mempool Sidecar ([source: mempool-workshop-sidecar](https://github.com/forshtat/mempool-workshop-sidecar)) is the standard alt-mempool node this repo talks to. Its rules come from
 > [forshtat/ERCs PR #6](https://github.com/forshtat/ERCs/pull/6), "Update ERC-7562: Add EIP-8141 specific rules",
 > pinned to commit `74a868c`. That work later evolved into [ERC-8421](https://ethereum-magicians.org/t/erc-8421-frame-transaction-alternative-mempools/29800)
 > ([ethereum/ERCs PR #2028](https://github.com/ethereum/ERCs/pull/2028)), and **the two are not equivalent**. The migration is ongoing. Differences known at the time of writing:
@@ -26,7 +26,7 @@ the sender is staked, and debug a rejection.
 | Term | Meaning |
 |---|---|
 | **Canonical mempool** | The public mempool defined by EIP-8141 itself. Strictest rules. No staking, no reputation. On the devnet this is ethrex's own validation. |
-| **Standard alt-mempool** | The ERC-8421-style rule set that Skandha implements. It admits some txs the canonical mempool rejects, when staking and reputation conditions hold. |
+| **Standard alt-mempool** | The ERC-8421-style rule set that the sidecar implements. It admits some txs the canonical mempool rejects, when staking and reputation conditions hold. |
 | **Staked entity** | A sender, paymaster or factory that has staked in the staking registry. Staking relaxes storage rules. |
 | **Reputation** | Per-entity `OK` / `THROTTLED` / `BANNED` state, from how many of an entity's txs were seen versus included. A banned entity is excluded from the mempool. |
 
@@ -43,10 +43,10 @@ yarn step_1_check
 ```
 
 `step_1_check` creates a throwaway key in `.workshop-state.json` (devnet only; never reuse it on a real network) and funds it from the devnet's faucet (1 ETH; also available as the **Faucet** button in the explorer). Devnet: chain `1337`,
-every request goes to the gateway, `https://altmempoolgateway.forshtat.com/rpc` (a Skandha node that gossips to the miner and forwards chain reads to ethrex),
+every request goes to the gateway, `https://altmempoolgateway.forshtat.com/rpc` (a sidecar node that gossips to the miner and forwards chain reads to ethrex),
 explorer at <https://altmempoolexplorer.forshtat.com/>. All configuration is in `workshop.config.json5` (read-only for the code; every key is required). There are no environment variables.
 
-The mempool node is Skandha, a fork that speaks EIP-8141. Its source, the full RPC reference (`deploy/devnet/devnet-readme.md`), the P2P guide and the devnet explorer API docs live in the sidecar repo: <https://github.com/forshtat/mempool-workshop-sidecar>.
+The mempool node is the sidecar, a fork that speaks EIP-8141. Its source, the full RPC reference (`deploy/devnet/devnet-readme.md`), the P2P guide and the devnet explorer API docs live in the sidecar repo: <https://github.com/forshtat/mempool-workshop-sidecar>.
 
 ## The steps
 

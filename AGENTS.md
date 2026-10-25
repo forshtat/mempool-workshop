@@ -1,15 +1,16 @@
 # AGENTS.md: running this workshop repo with an AI agent
 
 You are helping a developer work through an EIP-8141 / standard alt-mempool workshop on a **public throwaway devnet** (chain 1337).
-Read the work-in-progress notice in [README.md](README.md) first: Skandha's rules come from `forshtat/ERCs` PR #6, not exactly ERC-8421.
+Read the work-in-progress notice in [README.md](README.md) first: the sidecar's rules come from `forshtat/ERCs` PR #6, not exactly ERC-8421.
 
-The mempool node itself (Skandha fork) is in <https://github.com/forshtat/mempool-workshop-sidecar>; its `deploy/devnet/devnet-readme.md` is the RPC reference and `docs/skandha_explorer.md` documents the explorer API.
+The mempool node itself (sidecar fork) is in <https://github.com/forshtat/mempool-workshop-sidecar>; its `deploy/devnet/devnet-readme.md` is the RPC reference and `docs/sidecar_explorer.md` documents the explorer API.
 
 ## Terminology (use exactly this)
 
 - **canonical mempool**: EIP-8141's own public mempool (ethrex's validation on the devnet).
-- **gateway**: the one Skandha node every request goes to (`gatewayUrl`). It validates, gossips to the miner, and forwards `eth_*` reads and `eth_sendRawTransaction` to ethrex. Nothing talks to the miner or ethrex directly.
-- **standard alt-mempool**: the ERC-8421-style rule set Skandha implements.
+- **sidecar**: the ERC-8421 Mempool Sidecar, the mempool node (a heavily modified fork, not Skandha). Say "sidecar", never "Skandha".
+- **gateway**: the one sidecar node every request goes to (`gatewayUrl`). It validates, gossips to the miner, and forwards `eth_*` reads and `eth_sendRawTransaction` to ethrex. Nothing talks to the miner or ethrex directly.
+- **standard alt-mempool**: the ERC-8421-style rule set the sidecar implements.
 - **staked entity**, **reputation** (`OK` / `THROTTLED` / `BANNED`).
 Do not call the standard alt-mempool "canonical", and do not say "standard mempool" for the base rule set.
 
@@ -58,7 +59,7 @@ Flags: `--json`, `--fresh` (redeploy contracts the step owns). Config is `worksh
 
 - Never call `debug_bundler_clear*` or any other `debug_*` method that changes the node, except through `step_9_reputation_burn` and `reset_reputation` on the participant's own wallet. They affect everyone on the devnet.
 - There is no shared funded key in this repo: funding goes through the node's faucet (`skandha_explorer_faucet`). Never ask for, search for or use the devnet's genesis key.
-- Do not vendor or import from `skandha/packages/*/lib`: the built output can be stale. The codec comes from the `hegota-frames` package (`src/lib/frameTx` only binds it to this devnet's profile and keeps the workshop's gas numbers); the Skandha JSON shape (`toWire`) is still here.
+- Do not vendor or import from `skandha/packages/*/lib`: the built output can be stale. The codec comes from the `hegota-frames` package (`src/lib/frameTx` only binds it to this devnet's profile and keeps the workshop's gas numbers); the sidecar JSON shape (`toWire`) is still here.
 - When a tx is rejected, do not guess: run `yarn step_11_debug <txHash>` for the rule-by-rule admission report.
 
 ## Facts that explain failures

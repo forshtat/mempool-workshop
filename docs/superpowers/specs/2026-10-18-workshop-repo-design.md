@@ -9,7 +9,7 @@ projects. They know what frame transactions (EIP-8141) and mempool restrictions 
 depth. After the workshop each of them can:
 
 - choose between the **canonical mempool** (defined by EIP-8141) and the **standard alt-mempool**
-  (ERC-8421, implemented by the Skandha fork in `/Users/alexf/skandha`);
+  (ERC-8421, implemented by the sidecar fork in `/Users/alexf/skandha`);
 - write a validation-frame contract that suits that choice, deploy it, send a transaction with it,
   and debug a rejection;
 - do all of this on the public devnet (chain 1337, `https://altmempool.forshtat.com`);
@@ -44,7 +44,7 @@ Anti-goals (the repo fails if this happens, even when the commands run)
 | Term | Meaning |
 |---|---|
 | Canonical mempool | The mempool defined by EIP-8141 itself. Strictest rules, no staking, no reputation. |
-| Standard alt-mempool | The ERC-8421 rule set that Skandha implements. Admits some txs the canonical mempool rejects, when staking and reputation conditions hold. |
+| Standard alt-mempool | The ERC-8421 rule set that sidecar implements. Admits some txs the canonical mempool rejects, when staking and reputation conditions hold. |
 | Staked entity | A paymaster, factory or sender staked in the staking registry. Staking relaxes storage and creation rules. |
 | Reputation | Per-entity OK / THROTTLED / BANNED state from `opsSeen` versus `opsIncluded`. |
 
@@ -60,7 +60,7 @@ devnet is a demo, and that real nodes restrict it. `step_9` supports `--reset` t
 ## Spec provenance (goes in the README as a notice, nothing more)
 
 - Everything is under active development. The devnet can reset at any time.
-- Skandha's rules come from `forshtat/ERCs` PR #6 (WIP update to ERC-7562 with EIP-8141 rules),
+- the sidecar's rules come from `forshtat/ERCs` PR #6 (WIP update to ERC-7562 with EIP-8141 rules),
   commit `74a868c`. ERC-8421 evolved from it and is **not equivalent**. The README says so and
   names the differences known at the time of writing (renamed rule IDs, per-entity
   `MAX_VERIFY_GAS`, no per-entity state gas cap, `SAME_SENDER_MEMPOOL_COUNT` 64 and not applied to
@@ -75,7 +75,7 @@ is the rejection, and the output names the rule or error that caused it.
 
 | Command | Participant achieves | Expected outcome |
 |---|---|---|
-| `step_1_check` | Confirms the devnet, explorer and their own funded key work | Chain id 1337, balance > 0, Skandha reachable |
+| `step_1_check` | Confirms the devnet, explorer and their own funded key work | Chain id 1337, balance > 0, the sidecar reachable |
 | `step_2_tx_first` | Broadcasts a first frame tx (EOA self-relay) | Accepted, mined, receipt shown |
 | `step_3_tx_paymaster` | Broadcasts a frame tx with a paymaster | Accepted, mined, paymaster paid |
 | `step_4_wallet_deploy` | Deploys their own validation-frame contract | Contract has code at printed address |
@@ -119,7 +119,7 @@ docs/steps/            one runbook per step (goal, command, expected output, fai
 
 - Scripts use TypeScript and viem, run with `tsx`. The frame tx codec is vendored from
   `skandha/packages/executor/src/services/FrameTxService/codec.ts`, so participants do not need to
-  clone or build Skandha.
+  clone or build the sidecar.
 - Contracts are built with foundry. Frame opcodes that Solidity lacks (such as `APPROVE`) use
   inline assembly.
 - Step 1 funds the participant's key with a plain transfer from the shared key, with retries on

@@ -39,11 +39,11 @@ runStep("step_6_tx_violating_canonical", async (ctx) => {
   ctx.log("sending the violating tx to the canonical mempool (eth_sendRawTransaction, which the gateway forwards to ethrex)…");
   const canonical = await attempt(() => sendRawFrameTx(tx));
 
-  // Once the wallet is staked (step 7), Skandha would admit this tx and mine it, which would burn the wallet's nonce.
+  // Once the wallet is staked (step 7), the sidecar would admit this tx and mine it, which would burn the wallet's nonce.
   const staked = (await getStake(wallet)).amount > 0n;
   let alt: Verdict;
   if (staked) {
-    alt = { accepted: false, skipped: "wallet is staked (step 7): Skandha would admit this tx, so it was not sent" };
+    alt = { accepted: false, skipped: "wallet is staked (step 7): the sidecar would admit this tx, so it was not sent" };
   } else {
     ctx.log("sending the same tx to the standard alt-mempool (eth_sendFrameTransaction) for comparison…");
     alt = await attempt(() => sendFrameTx(tx));
@@ -56,7 +56,7 @@ runStep("step_6_tx_violating_canonical", async (ctx) => {
     hint: "the canonical mempool accepted a tx that reads foreign storage; the devnet's ethrex may have changed (see docs/findings.md)",
     summary: [
       line("canonical mempool (ethrex, via the gateway)", canonical),
-      line("standard alt-mempool (Skandha)", alt),
+      line("standard alt-mempool (sidecar)", alt),
       canonical.accepted ? "" : `why: ${canonical.rejection!.hint}`,
       `wallet: ${wallet}`,
       staked ? `tx hash: ${txHash(tx)}` : `tx hash: ${txHash(tx)} (debug with: yarn step_11_debug ${txHash(tx)})`,

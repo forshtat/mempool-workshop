@@ -18,7 +18,7 @@ runStep("step_1_check", async (ctx) => {
     await rpc(cfg.gatewayUrl, "skandha_explorer_listReputation", [{ limit: 1 }]);
   } catch {
     explorer = "unavailable (steps still work, but step_10 and step_11 print less)";
-    ctx.log("warning: Skandha explorer methods are not enabled on this node");
+    ctx.log("warning: sidecar explorer methods are not enabled on this node");
   }
 
   const account = privateKeyToAccount(ensureParticipantKey());
@@ -32,7 +32,7 @@ runStep("step_1_check", async (ctx) => {
   }
   return {
     summary: [
-      `chain ${cfg.chainId}: ethrex and Skandha reachable`,
+      `chain ${cfg.chainId}: ethrex and the sidecar reachable`,
       `participant: ${account.address}`,
       `balance: ${Number(balance) / 1e18} ETH${funded ? " (just funded)" : ""}`,
       `explorer: ${explorer}`,

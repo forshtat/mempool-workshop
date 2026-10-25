@@ -3,7 +3,7 @@ import { explainRejection } from "../../src/lib/frameTx/send.js";
 import { decodeDepositInfo } from "../../src/lib/contracts.js";
 
 describe("explainRejection", () => {
-  it("maps Skandha's storage rejection to the storage rules", () => {
+  it("maps the sidecar's storage rejection to the storage rules", () => {
     const r = explainRejection("unstaked payer accessed 0x6129d8bf6befced4bd2a300e0a57ec1ab73d690d slot 0x0000000000000000000000000000000000000000000000000000000000000000");
     expect(r.rule).toBe("STO");
     expect(r.hint).toContain("step_7_stake");

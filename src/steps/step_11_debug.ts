@@ -22,7 +22,7 @@ runStep("step_11_debug", async (ctx) => {
   ]);
   if (!admission && events.length === 0 && !status && !receipt) {
     throw new StepError("TX_UNKNOWN", `no node knows ${hash}`, {
-      hint: "the Skandha explorer keeps its history in memory only (cleared on restart), and ethrex only knows mined txs; check the hash",
+      hint: "the sidecar explorer keeps its history in memory only (cleared on restart), and ethrex only knows mined txs; check the hash",
     });
   }
 

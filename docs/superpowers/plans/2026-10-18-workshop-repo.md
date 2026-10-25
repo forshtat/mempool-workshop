@@ -14,15 +14,15 @@
 
 - Package manager is npm. Every command is `npm run step_<N>_<name>`, exactly as named in the spec's table.
 - Terminology is exactly: "canonical mempool" (EIP-8141's own), "standard alt-mempool" (ours), "staked entity", "reputation". Never use "standard mempool" or "alt-mempool" for the base rule set.
-- Devnet defaults: chain id `1337`, ethrex `https://altmempool.forshtat.com`, Skandha `https://altmempool.forshtat.com/rpc`. Shared funder key from `/Users/alexf/skandha/deploy/devnet/devnet-readme.md`.
+- Devnet defaults: chain id `1337`, ethrex `https://altmempool.forshtat.com`, the sidecar `https://altmempool.forshtat.com/rpc`. Shared funder key from `/Users/alexf/skandha/deploy/devnet/devnet-readme.md`.
 - A step exits 0 when the **expected** outcome happened (for "fail" steps, the rejection). `--json` prints exactly one JSON object on stdout and nothing else; logs go to stderr. Errors are JSON with `code`, `rule`, `hint`.
 - State between steps lives only in `.workshop-state.json` (git-ignored). Config only in env / `.env`.
-- Spec provenance: Skandha's rules come from `forshtat/ERCs` PR #6, commit `74a868c`; ERC-8421 is not equivalent. README states this. No `SPEC-STATUS.md`.
+- Spec provenance: the sidecar's rules come from `forshtat/ERCs` PR #6, commit `74a868c`; ERC-8421 is not equivalent. README states this. No `SPEC-STATUS.md`.
 - Vendor the frame tx codec from `skandha/packages/*/src`, never `lib` (the built `lib` is stale).
 - Contract deployments use gas 6,000,000. Fund a contract only through its creation `value`, never a plain transfer.
 - foundry: `solc 0.8.28`, `via_ir = true`, `evm_version = "cancun"`. Wallets never contain frame opcodes; they `delegatecall` the `Approver` (runtime `0x600360006000aa`).
 - Step 9 is a declared shortcut and must say so in its own output. It touches only the participant's own entity and never calls a `clear*` method.
-- No interactive prompts. The repo is not required to build Skandha; the frame tx codec is vendored from `/Users/alexf/skandha/packages/executor/src/services/FrameTxService/codec.ts`.
+- No interactive prompts. The repo is not required to build the sidecar; the frame tx codec is vendored from `/Users/alexf/skandha/packages/executor/src/services/FrameTxService/codec.ts`.
 - `/Users/alexf/mumbaiworkshop` is not a git repo yet; Task 1 runs `git init`.
 
 ## Review Focus
@@ -66,7 +66,7 @@ with a `SENDER` frame, no staking code (Check 4); funding retries up to 10 times
 - [ ] **Step 3: Run** `npm test`. Expected: FAIL (modules missing).
 - [ ] **Step 4: Implement** the lib per Interfaces. State file path is `process.env.WORKSHOP_STATE ?? ".workshop-state.json"`.
 - [ ] **Step 5: Run** `npm test`. Expected: PASS.
-- [ ] **Step 6: Implement `step_1_check`.** Checks `eth_chainId` equals 1337 on both endpoints, Skandha answers `skandha_config`, the explorer answers `skandha_explorer_info` (report absence as a warning), then funds the participant key with 0.05 ETH from the funder key if its balance is below 0.02, retrying up to 10 times with a fresh pending-nonce read and 150-450 ms jitter (Check 5: 1 of 10 succeed without retries). Output includes the participant address and balance.
+- [ ] **Step 6: Implement `step_1_check`.** Checks `eth_chainId` equals 1337 on both endpoints, the sidecar answers `skandha_config`, the explorer answers `skandha_explorer_info` (report absence as a warning), then funds the participant key with 0.05 ETH from the funder key if its balance is below 0.02, retrying up to 10 times with a fresh pending-nonce read and 150-450 ms jitter (Check 5: 1 of 10 succeed without retries). Output includes the participant address and balance.
 - [ ] **Step 7: Verify.** Run `npm run step_1_check` and `npm run step_1_check -- --json | jq .`. Expected: exit 0, valid JSON, balance > 0.
 - [ ] **Step 8: Commit** `feat: scaffold repo, shared lib, step_1_check`.
 
@@ -91,7 +91,7 @@ with a `SENDER` frame, no staking code (Check 4); funding retries up to 10 times
 - [ ] **Step 2: Run** `npm test`. Expected: FAIL.
 - [ ] **Step 3: Vendor** the codec and enums from the paths in Global Constraints and `packages/types/src/contracts/FrameTx.ts`; implement the rest of the Interfaces. Mirror `buildUnsignedFrameTx`/`signFrameTx`/`toWire` from `/Users/alexf/skandha/test/e2e/frameTx.e2e.test.ts`.
 - [ ] **Step 4: Run** `npm test`. Expected: PASS.
-- [ ] **Step 5: Implement `step_2_tx_first`.** Self-relay transfer of 1 gwei to a fixed recipient from the participant key via Skandha; waits for the receipt; writes `lastTxHash` to state. Output: tx hash, block, status, explorer link.
+- [ ] **Step 5: Implement `step_2_tx_first`.** Self-relay transfer of 1 gwei to a fixed recipient from the participant key via the sidecar; waits for the receipt; writes `lastTxHash` to state. Output: tx hash, block, status, explorer link.
 - [ ] **Step 6: Verify.** `npm run step_2_tx_first -- --json`. Expected: exit 0, receipt status success.
 - [ ] **Step 7: Commit** `feat: frame tx lib and step_2_tx_first`.
 
@@ -141,7 +141,7 @@ Uses the Check 2 design: Solidity contracts that `delegatecall` an `Approver`.
 
 ### Task 5: `step_6_tx_violating_canonical`
 
-The canonical rejection comes from ethrex `eth_sendRawTransaction` (Check 1). The step also sends the same tx to Skandha so participants see both messages.
+The canonical rejection comes from ethrex `eth_sendRawTransaction` (Check 1). The step also sends the same tx to the sidecar so participants see both messages.
 
 **Files:**
 - Create: `contracts/src/ViolatingWallet.sol`, `contracts/test/ViolatingWallet.t.sol`
@@ -152,11 +152,11 @@ The canonical rejection comes from ethrex `eth_sendRawTransaction` (Check 1). Th
 - Produces: `ViolatingWallet(address approver, address foreign)`: its validation fallback reads `foreign` storage via `staticcall` only when the VERIFY frame `data` is non-empty (a storage-rule violation that staking relaxes), then `delegatecall`s the approver. Empty `data` is the clean path used for the stake tx; state key `violating`; `explainRejection` maps a node error to a rule ID from PR #6 (for example `STO-0xx`) and a hint.
 - Test: `test/lib/explainRejection.test.ts`
 
-- [ ] **Step 1: Failing test** `explainRejection.test.ts`: a recorded Skandha error for a storage violation yields `rule` starting `STO-`; an unknown error yields `rule: "UNKNOWN"` and keeps the raw message.
+- [ ] **Step 1: Failing test** `explainRejection.test.ts`: a recorded sidecar error for a storage violation yields `rule` starting `STO-`; an unknown error yields `rule: "UNKNOWN"` and keeps the raw message.
 - [ ] **Step 2: Run** `npm test`. Expected: FAIL.
 - [ ] **Step 3: Implement `ViolatingWallet` and `explainRejection`.**
 - [ ] **Step 4: Run** `npm test` and `forge test --root contracts`. Expected: PASS.
-- [ ] **Step 5: Implement the step.** Deploy or reuse `violating` (funded 0.05 ETH at creation), send the violating tx (VERIFY `data` = `0x01`, execution limit 70,000) to ethrex via `eth_sendRawTransaction` and to Skandha. Expect rejection from both, print the rule and both messages. Exit 0 only on rejection (exit 1 if ethrex accepts it, with a hint). Expected: `StorageReadNonSender` from ethrex.
+- [ ] **Step 5: Implement the step.** Deploy or reuse `violating` (funded 0.05 ETH at creation), send the violating tx (VERIFY `data` = `0x01`, execution limit 70,000) to ethrex via `eth_sendRawTransaction` and to the sidecar. Expect rejection from both, print the rule and both messages. Exit 0 only on rejection (exit 1 if ethrex accepts it, with a hint). Expected: `StorageReadNonSender` from ethrex.
 - [ ] **Step 6: Verify** `npm run step_6_tx_violating_canonical -- --json`. Expected: exit 0, `rule` populated.
 - [ ] **Step 7: Commit** `feat: ViolatingWallet and step_6`.
 
@@ -174,8 +174,8 @@ The canonical rejection comes from ethrex `eth_sendRawTransaction` (Check 1). Th
 
 - [ ] **Step 1: Failing test.** `buildStakeTx` produces a SENDER frame whose target is the registry, whose data starts with the `addStake(uint32)` selector, and whose VERIFY frame data is `0x`.
 - [ ] **Step 2: Run.** Expected: FAIL. **Step 3: Implement. Step 4: Run.** Expected: PASS.
-- [ ] **Step 5: Implement step 7.** Sends the stake tx to Skandha, waits for the receipt, then verifies `getStake`. Idempotent: already staked prints the stake and exits 0. Output includes the explorer's `isStaked`.
-- [ ] **Step 6: Implement step 8.** Sends the same violating tx as step 6 (reuse its builder) to Skandha; expects acceptance and a mined receipt; exits 1 with the hint "run step_7_stake" when rejected with `unstaked payer accessed`.
+- [ ] **Step 5: Implement step 7.** Sends the stake tx to the sidecar, waits for the receipt, then verifies `getStake`. Idempotent: already staked prints the stake and exits 0. Output includes the explorer's `isStaked`.
+- [ ] **Step 6: Implement step 8.** Sends the same violating tx as step 6 (reuse its builder) to the sidecar; expects acceptance and a mined receipt; exits 1 with the hint "run step_7_stake" when rejected with `unstaked payer accessed`.
 - [ ] **Step 7: Verify** steps 7 and 8 with `--json`. Expected: exit 0 each, and step 6 still rejected by ethrex afterwards.
 - [ ] **Step 8: Commit** `feat: steps 7 and 8`.
 

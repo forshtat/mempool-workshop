@@ -8,7 +8,7 @@ yarn step_8_tx_violating_alt      # add --json for one JSON object
 
 **Needs:** step 7
 
-**What it does:** The exact tx of step 6, now to Skandha. The staked wallet is admitted and mined.
+**What it does:** The exact tx of step 6, now to the sidecar. The staked wallet is admitted and mined.
 
 **Expected output** (addresses and hashes differ):
 
