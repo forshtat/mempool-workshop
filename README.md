@@ -95,11 +95,16 @@ Point your agent at [`AGENTS.md`](AGENTS.md). Every step can be run alone, `--js
 
 ```
 contracts/src        Solidity: SponsorPaymaster, ExampleWallet, ViolatingWallet (+ tests in contracts/test)
+contracts/fork       the same wallet for the EIP-8141 solc fork (optional, see below)
 contracts/artifacts  compiled output, committed (steps run without foundry); rebuild with `yarn build:contracts`
 src/steps            one file per step
 src/lib              frame tx codec and builders, RPC, explorer, state
 docs/steps           runbook per step
 docs/findings.md     what was verified on the devnet, and why the contracts look the way they do
 ```
+
+### Optional: the EIP-8141 solc fork
+
+The contracts in `contracts/src` are written for vanilla `solc` plus the `HegotaSupport` base contract from `@forshtat/hegota-support`, which deploys one small Yul helper per opcode. That stays the workshop's way. A community fork of the compiler, [chiranjeev13/solidity](https://github.com/chiranjeev13/solidity) (release `v0.8.38-eip8141.0`), instead teaches inline assembly the EIP-8141 opcodes as Yul builtins (`approve`, `txparam`, `frameparam`, `sigparam`, ...), enabled by the EVM version `cancun+eip8141`. [`contracts/fork/ForkSolcWallet.sol`](contracts/fork/ForkSolcWallet.sol) is `ExampleWallet` written that way: no base contract, no helpers, so the opcode runs in the wallet's own code. `yarn compile:fork /path/to/solc` compiles it with the fork and checks that `SIGPARAM`, `APPROVE` and `TXPARAM` are in the bytecode. It needs the fork's `solc` binary (from the release page, or built from source) and does not run in `yarn test`; `forge build` ignores the file. It has been compiled but not yet run on the devnet.
 
 Contract tests: `forge install foundry-rs/forge-std --no-git --root contracts` once, then `yarn test:contracts`. TypeScript tests: `yarn test`.

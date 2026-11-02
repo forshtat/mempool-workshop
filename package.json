@@ -22,7 +22,8 @@
     "build:contracts": "forge build --root contracts && node scripts/export-artifacts.mjs",
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
-    "test:contracts": "forge test --root contracts"
+    "test:contracts": "forge test --root contracts",
+    "compile:fork": "node scripts/compile-with-fork.mjs"
   },
   "engines": {
     "node": ">=20.12"
