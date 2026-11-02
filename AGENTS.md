@@ -72,4 +72,4 @@ Flags: `--json`, `--fresh` (redeploy contracts the step owns). Config is `worksh
 - A transfer to a brand-new account needs a non-zero `state` gas limit.
 - `docs/findings.md` records what was verified on the devnet and why.
 
-- `contracts/fork/` is an optional variant for the EIP-8141 solc fork (`yarn compile:fork <solc>`). The workshop's contracts and artifacts keep using vanilla solc and `@forshtat/hegota-support`; do not move them to the fork.
+- `contracts/fork/` is a very experimental, untested optional variant for the EIP-8141 solc fork (`yarn compile:fork <solc>`). The workshop's contracts and artifacts keep using vanilla solc and `@forshtat/hegota-support`; do not move them to the fork.
